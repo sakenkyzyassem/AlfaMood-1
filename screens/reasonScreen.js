@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, TextInput, Text, TouchableOpacity, Image, KeyboardAvoidingView, ActivityIndicator} from 'react-native';
+import { StyleSheet, View, TextInput, Text, TouchableOpacity, Image, KeyboardAvoidingView, ActivityIndicator,AsyncStorage} from 'react-native';
 import NavigationService from '../navigation/NavigationService';
-import AsyncStorage from '@react-native-community/async-storage';
 
 export default class ReasonScreen extends Component
 {
@@ -20,15 +19,21 @@ export default class ReasonScreen extends Component
         };
     }
     vote=async () =>{
-        var date =this.props.getParam('info')[0];
-        var cycle =this.props.getParam('info')[1];
+        const {navigation} =this.props;
+        var date =navigation.getParam('info')[0];
+        var cycle =navigation.getParam('info')[1];
         this.setState({date:date,cycle:cycle});
         try{
-            var value = await AsyncStorage.getItem('date');
-            if(date===value){
-                value= await AsyncStorage.getItem('cycle');
-                if(cycle===value){
+            var cellDate = await AsyncStorage.getItem('date');
+            var cellCycle= await AsyncStorage.getItem('cycle');
+            console.log(date);
+            console.log(cellDate);
+            if(date==cellDate){
+                console.log(cycle);
+                console.log(cellCycle);
+                if(cycle==cellCycle){
                     this.setState({canVote:false});
+                    await alert(this.state.canVote);
                 }
             }
         }
@@ -36,14 +41,35 @@ export default class ReasonScreen extends Component
             console.log(e);
         }
     }
-    async componentDidMount(){
-        await vote();
+    async componentDidMount(){ /*no problem with this method*/
+        await this.vote(); /*I doubt it*/
         try{
-            var user = await AsyncStorage.getItem('user_id');
+            var user = await AsyncStorage.getItem('user_id'); /*this is going ok*/
             this.setState({user_id:user});
         }catch(e){console.log(e)};
-        this.setState({user_id:user_id});
     }
+    addMood = async() =>
+    {
+        if(this.state.canVote){
+            const { navigation } = this.props;
+            var mood=navigation.getParam('title');
+            this.setState({loading:true});
+            await this.postMethod('addMood','192.168.1.15',{
+                comment:this.state.comment,
+                rate:mood,
+                cycle:this.state.cycle,
+                user_id:this.state.user_id}); this /*one is also saving it all ok*/
+            await AsyncStorage.setItem('date',this.state.date);
+            await AsyncStorage.setItem('cycle',''+this.state.cycle);
+            this.setState({loading:false});
+        }
+        else{
+            alert('No more votes this cycle (But, maybe, in the future we would add some feature so that you could editthe vote)');
+        }
+    }
+
+
+
     postMethod= async(method,methodUrl,methodBody)=>{
         await fetch('http://'+methodUrl+'/alfa/'+method+'.php',
         {
@@ -61,28 +87,6 @@ export default class ReasonScreen extends Component
         });
 
     };
- 
-    addMood = async() =>
-    {
-        if(this.state.canVote){
-            const { navigation } = this.props;
-            var mood=navigation.getParam('title');
-            this.setState({loading:true});
-            await this.postMethod('addMood','192.168.1.15',{
-                comment:this.state.comment,
-                rate:mood,
-                cycle:this.state.cycle,
-                user_id:this.state.user_id});
-            await AsyncStorage.setItem('date',this.state.date);
-            await AsyncStorage.setItem('cycle',this.state.cycle);
-            this.setState({loading:false});
-            alert(this.state.data.data);
-        }
-        else{
-            alert('You can not vote this cycle no more(But, maybe, you could edit your vote a litle later)');
-        }
-    }
-
     render()
     {
         const { navigation } = this.props;

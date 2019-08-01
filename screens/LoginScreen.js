@@ -1,6 +1,6 @@
+
 import React, { Component } from 'react';
-import { StyleSheet, View, TextInput, Text, ActivityIndicator, TouchableOpacity,Image} from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
+import { StyleSheet, View, TextInput, Text, ActivityIndicator, TouchableOpacity,Image,AsyncStorage} from 'react-native';
 
 export default class LogInPage extends Component
 {
@@ -46,20 +46,19 @@ export default class LogInPage extends Component
             await this.checkUser();
         }
         catch(e){
+            console.log(e)
             alert("Wrong Code!")
         }
     }
     checkUser= async()=>{
-        try{
-            await AsyncStorage.getItem('user_id');
-        }
-        catch{
+        var user_id= await AsyncStorage.getItem('user_id');    
+        if(user_id===null){
             alert("No user detected, creating");
             this.setState({loading:true});
             await this.postMethod('addUser','192.168.1.15',{department_id:this.state.department_id});
-            this.setState({loading:false,user_id:data[0][0]['id']});
-            alert(this.state.user_id);
+            this.setState({loading:false,user_id:this.state.data[0][0]});
             AsyncStorage.setItem('user_id',this.state.user_id);
+            alert(AsyncStorage.getItem('user_id'));
         }
     }
     move = () => {
