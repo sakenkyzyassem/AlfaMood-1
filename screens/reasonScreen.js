@@ -15,25 +15,17 @@ export default class ReasonScreen extends Component
             canVote:true,
             date:null,
             cycle:null,
-            user_id:null
+            user_id:null,
+            department_id:null,
         };
     }
     vote=async () =>{
-        const {navigation} =this.props;
-        var date =navigation.getParam('info')[0];
-        var cycle =navigation.getParam('info')[1];
-        this.setState({date:date,cycle:cycle});
         try{
             var cellDate = await AsyncStorage.getItem('date');
             var cellCycle= await AsyncStorage.getItem('cycle');
-            console.log(date);
-            console.log(cellDate);
-            if(date==cellDate){
-                console.log(cycle);
-                console.log(cellCycle);
-                if(cycle==cellCycle){
+            if(this.state.date==cellDate){
+                if(this.state.cycle==cellCycle){
                     this.setState({canVote:false});
-                    await alert(this.state.canVote);
                 }
             }
         }
@@ -41,15 +33,20 @@ export default class ReasonScreen extends Component
             console.log(e);
         }
     }
-    async componentDidMount(){ /*no problem with this method*/
-        await this.vote(); /*I doubt it*/
+    async componentDidMount(){ 
+        const {navigation} = this.props;
+        var date =navigation.getParam('info')[0];
+        var cycle =navigation.getParam('info')[1];
+        this.setState({date:date,cycle:cycle});
         try{
-            var user = await AsyncStorage.getItem('user_id'); /*this is going ok*/
-            this.setState({user_id:user});
+            var user = await AsyncStorage.getItem('user_id');
+            var department=await AsyncStorage.getItem('department_id');
+            this.setState({user_id:user,department_id:department});
         }catch(e){console.log(e)};
     }
     addMood = async() =>
     {
+        await this.vote();
         if(this.state.canVote){
             const { navigation } = this.props;
             var mood=navigation.getParam('title');
@@ -58,10 +55,12 @@ export default class ReasonScreen extends Component
                 comment:this.state.comment,
                 rate:mood,
                 cycle:this.state.cycle,
-                user_id:this.state.user_id}); this /*one is also saving it all ok*/
+                user_id:this.state.user_id,
+                department_id:this.state.department_id}); 
             await AsyncStorage.setItem('date',this.state.date);
             await AsyncStorage.setItem('cycle',''+this.state.cycle);
             this.setState({loading:false});
+            alert(this.state.data.data);
         }
         else{
             alert('No more votes this cycle (But, maybe, in the future we would add some feature so that you could editthe vote)');

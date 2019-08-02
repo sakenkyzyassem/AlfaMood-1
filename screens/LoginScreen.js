@@ -42,6 +42,7 @@ export default class LogInPage extends Component
     checkDep=async()=>{
         try{
             this.setState({department_id:this.state.data[0]['department_id']});
+            await AsyncStorage.setItem('department_id',this.state.department_id);
             alert("Your code is okay, now checking if the user exists");
             await this.checkUser();
         }
@@ -58,7 +59,7 @@ export default class LogInPage extends Component
             await this.postMethod('addUser','192.168.1.15',{department_id:this.state.department_id});
             this.setState({loading:false,user_id:this.state.data[0][0]});
             AsyncStorage.setItem('user_id',this.state.user_id);
-            alert(AsyncStorage.getItem('user_id'));
+            await alert(AsyncStorage.getItem('user_id'));
         }
     }
     move = () => {

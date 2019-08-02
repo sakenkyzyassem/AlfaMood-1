@@ -31,26 +31,6 @@ const RootStack = createStackNavigator(
 const AppContainer = createAppContainer(RootStack);
 
 export default class App extends React.Component {
-  async componentDidMount(){
-    await this.setDateData();
-    await this.setCycleData();
-  }
-  setDateData=async()=>{
-    try{
-      await AsyncStorage.getItem('date');
-    }
-    catch{
-      await AsyncStorage.setItem('date',null);
-    }
-  }
-  setCycleData=async()=>{
-    try{
-      await AsyncStorage.getItem('cycle');
-    }
-    catch{
-      await AsyncStorage.setItem('cycle',null);
-    }
-  }
   render() {
     return <AppContainer 
             ref={navigatorRef => {
