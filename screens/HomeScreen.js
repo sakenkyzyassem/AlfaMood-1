@@ -16,6 +16,8 @@ export default class HomeScreen extends React.Component {
   static navigationOptions = {      
     headerRight: <ActionBarImage />,
     headerMode: 'screen',
+    headerLeft: null,
+    gesturesEnabled:false,
   }
 
   constructor(props) {
@@ -36,9 +38,9 @@ export default class HomeScreen extends React.Component {
 
     var hours = new Date().getHours();
 
-    if(hours > 9 && hours < 13)
+    if(hours >= 0 && hours <= 12)
       this.setState({cycle: 1})
-    else if (hours > 14 && hours < 18)
+    else if (hours > 12 && hours <= 17)
       this.setState({cycle: 2})
     else 
       this.setState({cycle: 3})

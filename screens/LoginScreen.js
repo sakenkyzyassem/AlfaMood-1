@@ -13,7 +13,15 @@ export default class LogInPage extends Component
           department_id:'',
           loading: false, 
           data:null,
+          server:null,
+          ready:false
         }
+    }
+    async componentDidMount(){
+        await this.checkUser();
+        var server= await AsyncStorage.getItem('server');
+        this.setState({server:server});
+        console.log(server);
     }
     postMethod= async(method,methodUrl,methodBody)=>{
         await fetch('http://'+methodUrl+'/alfa/'+method+'.php',
@@ -35,7 +43,7 @@ export default class LogInPage extends Component
     signUp = async () =>
     {
         this.setState({loading:true,department_id:''});
-        await this.postMethod('checkCode','192.168.1.15',{code:this.state.department_code});
+        await this.postMethod('checkCode',this.state.server,{code:this.state.department_code});
         this.setState({loading:false})
         this.move();
     }
@@ -43,58 +51,67 @@ export default class LogInPage extends Component
         try{
             this.setState({department_id:this.state.data[0]['department_id']});
             await AsyncStorage.setItem('department_id',this.state.department_id);
-            alert("Your code is okay, now checking if the user exists");
             await this.checkUser();
         }
         catch(e){
-            console.log(e)
             alert("Wrong Code!")
         }
     }
     checkUser= async()=>{
         var user_id= await AsyncStorage.getItem('user_id');    
-        if(user_id===null){
-            alert("No user detected, creating");
-            this.setState({loading:true});
-            await this.postMethod('addUser','192.168.1.15',{department_id:this.state.department_id});
-            this.setState({loading:false,user_id:this.state.data[0][0]});
-            AsyncStorage.setItem('user_id',this.state.user_id);
-            await alert(AsyncStorage.getItem('user_id'));
+        if(user_id==null){
+            this.setState({ready:true});
         }
-    }
-    move = () => {
-        this.checkDep();
-        if(this.state.department_id!=''){
+        else{
             this.props.navigation.navigate('Home');
         }
     }
+    addUser=async()=>{
+        this.setState({loading:true});
+        await this.postMethod('addUser',this.state.server,{department_id:this.state.department_id});
+        this.setState({loading:false,user_id:this.state.data[0][0]});
+        AsyncStorage.setItem('user_id',this.state.user_id);
+    }
+    move = () => {
+        this.checkDep();
+        this.props.navigation.navigate('Home');
+    }
     render()
     {
-        return(
-            <View style = { styles.MainContainer }>
-                <Image source={require('../assets/images/image.png')}/>
-                
-                <View style={styles.Container}>
+        if(this.state.ready){
+            return(
+                <View style = { styles.MainContainer }>
+                    <Image source={require('../assets/images/image.png')}/>
                     
-                    <TextInput
-                    style={{borderBottomColor:'gray',marginTop:15,marginLeft:10,textAlign:'center'}}
-                    placeholder='Enter the department code'
-                    onChangeText={(text) => this.setState({department_code:text})}/>
-                    
-                    <View style={{height:'50%'}}/>
-                    
-                    <TouchableOpacity style={styles.TouchableOpacityStyle} onPress={this.signUp}>
-                        <Text>Sign up</Text>
-                    </TouchableOpacity>
+                    <View style={styles.Container}>
+                        
+                        <TextInput
+                        style={{borderBottomColor:'gray',marginTop:15,marginLeft:10,textAlign:'center'}}
+                        placeholder='Enter the department code'
+                        onChangeText={(text) => this.setState({department_code:text})}/>
+                        
+                        <View style={{height:'50%'}}/>
+                        
+                        <TouchableOpacity style={styles.TouchableOpacityStyle} onPress={this.signUp}>
+                            <Text>Sign up</Text>
+                        </TouchableOpacity>
 
+                    </View>
+                    
+                    {
+                    this.state.loading ? <ActivityIndicator color='#009688' size='large'style={styles.ActivityIndicatorStyle} /> : null          
+                    }
+                    
                 </View>
-                
-                {
-                this.state.loading ? <ActivityIndicator color='#009688' size='large'style={styles.ActivityIndicatorStyle} /> : null          
-                }
-                
-            </View>
-        );
+            );
+        }
+        else{
+            return(
+                <View style={[styles.MainContainer,{backgroundColor:'white'}]}>
+                    <ActivityIndicator color='#009688' size='large'style={styles.ActivityIndicatorStyle} />
+                </View>
+            );
+        }
     }
 }
 const styles = StyleSheet.create(

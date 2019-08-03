@@ -10,7 +10,12 @@ import NavigationService from './components/NavigationService';
 
 const RootStack = createStackNavigator(
   {
-    Home: HomeScreen,
+    Home:{
+      screen:HomeScreen,
+      navigationOptions:{
+        gesturesEnabled: false
+      }
+    },
     History: {
       screen: HistoryScreen,
       navigationOptions: {  
@@ -31,6 +36,12 @@ const RootStack = createStackNavigator(
 const AppContainer = createAppContainer(RootStack);
 
 export default class App extends React.Component {
+  async componentDidMount(){
+    var server='192.168.1.15';
+    await AsyncStorage.setItem('server',server);
+    var s=await AsyncStorage.getItem('server');
+    console.log(s);
+  }
   render() {
     return <AppContainer 
             ref={navigatorRef => {
