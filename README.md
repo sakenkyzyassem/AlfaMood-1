@@ -2,8 +2,8 @@
 AlfaMood mobile app working on React Native
 
 to install:
-in the working directory
-1) run git clone https://github.com/ZhanZhaksylyk/AlfaMood/
-2) run cd AlfaMood
+in the working directory run this lines of codes
+1) git clone https://github.com/ZhanZhaksylyk/AlfaMood/
+2) cd AlfaMood
 3) npm install
 4) npm start
