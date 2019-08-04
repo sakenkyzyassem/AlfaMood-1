@@ -51,7 +51,7 @@ export default class LogInPage extends Component
         try{
             this.setState({department_id:this.state.data[0]['department_id']});
             await AsyncStorage.setItem('department_id',this.state.department_id);
-            await this.checkUser();
+            await this.addUser();
         }
         catch(e){
             alert("Wrong Code!")

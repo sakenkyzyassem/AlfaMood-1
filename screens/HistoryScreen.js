@@ -10,21 +10,10 @@ export default class HistoryPage extends Component {
       server:null,
       user_id:null,
       date:null,
-      loading:true
+      loading:true,
+      todayData:null
     };
   };
-  async componentDidMount(){
-    await this.doFirst();
-  };
-  doFirst= async ()=>{
-    var server=await AsyncStorage.getItem('server');
-    var user_id= await AsyncStorage.getItem('user_id');
-    var date=new Date();
-    this.setState({server:server,user_id:user_id,date:date});
-    await this.getData();
-    console.log(this.state.data);
-    this.setState({loading:false});
-  }
   postMethod= async(method,methodUrl,methodBody)=>{
   	await fetch('http://'+methodUrl+'/alfa/'+method+'.php',
   	{
@@ -41,26 +30,54 @@ export default class HistoryPage extends Component {
   	    this.setState({data:responseJsonFromServer});
   	});
   };
+  move(){
+    NavigationService.navigate('Home');
+  };
+  async componentDidMount(){
+    await this.doFirst();
+    this.setTodayDate(1);
+    this.setState({loading:false});
+  };
+  doFirst= async ()=>{
+    var server=await AsyncStorage.getItem('server');
+    var user_id= await AsyncStorage.getItem('user_id');
+    var date=new Date();
+    this.setState({server:server,user_id:user_id,date:date});
+    await this.getData();
+  }
   getData=async()=>{
     var data={};
     for (var i = 0; i < 7; i++) {
       var dateName='day'+(i+1);
       var array={};
-      for (var j = 1; j < 4; j++) {
+      for (var j = 1; j <= 3; j++) {
         this.setState({data:null});
         var cycleName ='cycle'+j;
         await this.postMethod('getMood',this.state.server,{user_id:this.state.user_id,cycle:j,day:i});
-        if(typeof this.state.data !=='undefined'){array[cycleName]=this.state.data;}
+        try{
+          array[cycleName]=this.state.data;
+          var d=array[cycleName][0];
+          GetImage(d);
+        }catch(e){
+
+        }
       }
       data[dateName]=array;
     }
     this.setState({data:data});
-    console.log(this.state.data.day1.cycle1[0].mood);
   };
-
-  move(){
-    NavigationService.navigate('Home');
-  };
+  setTodayDate=(day)=>{
+    this.setState({todayData:null,loading:true});
+    var date='day'+day;
+    for (var i = 1; i < 4; ++i) {
+      var cycle='cycle'+i;
+      var check=this.state.data[date][cycle][0];
+      if(check!='undefined'){
+        this.setState({todayData:this.state.data[date]});
+        break;
+      }
+    }
+  }
   render() {
     return (
       <View style={[styles.MainContainer,{backgroundColor:'white'}]}>
@@ -71,11 +88,9 @@ export default class HistoryPage extends Component {
               source={require('../assets/images/background/stats-background.png')}
               style={styles.BackgroundImage}
             />
-            <View style={styles.TodayView}>
-              <TodayView data={this.state.data} />
-              <TodayView data={this.state.data} />
-              <TodayView data={this.state.data} />
-            </View>
+            {
+              this.state.todayData==null ? <NoToday/>:<BigView data={this.state.todayData}/>
+            }
             <View style={styles.ButtomView}>
               <TouchableOpacity onPress={this.move}>
                 <ButtomView />
@@ -93,7 +108,8 @@ export default class HistoryPage extends Component {
   }
 }
 GetImage=(data)=>{
-	switch (data.mood) {
+  var mood=data.mood;
+	switch (mood) {
 		case "happy":
 			data.image=require('../assets/images/emotions/happy.png');
 			break;
@@ -111,29 +127,61 @@ GetImage=(data)=>{
 			break;
 		default:
 			break;
-	}
+  }
 }
 
+NoToday=()=>{
+  console.log("no Today");
+  return(
+    <View style={styles.TodayView}>
+      <Text>
+        Sorry but you haven't voted today
+      </Text>
+    </View>
+  );
+}
+
+BigView = (props) => {
+  var a = Array();
+  for (var i = 1; i <= 3; ++i) {
+    var cycle='cycle'+i;
+      if(props.data[cycle][0]!='undefined'){
+        a[i]=true;
+      }else{a[i]=false;}
+  }
+  return (
+    <View style={styles.TodayView}>
+      {
+        a[0] ? <TodayView data={props.data['cycle1'][0]}/>:<BlankBig/>
+      }
+      {
+        a[1] ? <TodayView data={props.data['cycle2'][0]}/>:<BlankBig/>
+      }
+      {
+        a[2] ? <TodayView data={props.data['cycle3'][0]}/>:<BlankBig/>
+      }
+    </View>
+  );
+};
 TodayView = (props) => {
   return (
     <View style={styles.TodayViewContainer}>
       <Image
-        source={require('../assets/images/emotions/angry.png')}
+        source={props.data.image}
         style={styles.TodayViewImage}
       />
       <View style={styles.TodayViewTextView}>
-        <Text style={styles.TodayViewText}>let me write something</Text>
+        <Text style={styles.TodayViewText}>{props.data.comment}</Text>
+        <View style={styles.TodayViewTimeView}>
+          <Text style={styles.TodayViewTime}>
+            {props.data.time}
+          </Text>
+        </View>
       </View>
     </View>
   );
 };
-BigView =(props)=>
-{
-	return
-	(
-		<View/>
-	);
-}
+
 ButtomView = (props) => {
   return (
     <Image
@@ -142,6 +190,7 @@ ButtomView = (props) => {
     />
   );
 };
+
 HistoryView = (props) => {
   return (
     <View style={styles.HistoryViewContainer}>
@@ -166,11 +215,25 @@ HistoryView = (props) => {
     </View>
   );
 };
+BlankBig=()=>{
+  console.log('blank big');
+  return(
+    <View style={BlankBig}>
+    </View>
+  );
+}
+BlankSmall=()=>{
+  return(
+    <View style={BlankSmall}>
+    </View>
+  );
+}
 const styles = StyleSheet.create({
+  BlankBig:{height:'15%'},
+  BlankSmall:{height:30},
   MainContainer: {
     flex:1,
     flexDirection: 'column',
-    alignItems: 'center',
     justifyContent:'center'
   },
   BackgroundImage: {
@@ -212,6 +275,13 @@ const styles = StyleSheet.create({
     borderRadius:15,
   },
   TodayViewText:{
+
+  },
+  TodayViewTimeView:{
+    marginBottom:'2%',
+    marginRight:'5%'
+  },
+  TodayViewTime:{
 
   },
   ButtonViewImage: {

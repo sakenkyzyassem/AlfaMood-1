@@ -37,10 +37,9 @@ const AppContainer = createAppContainer(RootStack);
 
 export default class App extends React.Component {
   async componentDidMount(){
-    var server='192.168.1.15';
+    var server='192.168.43.209';
     await AsyncStorage.setItem('server',server);
     var s=await AsyncStorage.getItem('server');
-    console.log(s);
   }
   render() {
     return <AppContainer 

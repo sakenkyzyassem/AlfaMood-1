@@ -31,19 +31,21 @@ export default class HomeScreen extends React.Component {
 
   componentDidMount() {
     setInterval( () => {
+      var hours = new Date().getHours();
+
+      if(hours >= 0 && hours <= 12)
+        this.setState({cycle: 1})
+      else if (hours > 12 && hours <= 17)
+        this.setState({cycle: 2})
+      else 
+        this.setState({cycle: 3})
+      
       this.setState({
         curDate : new Date().toDateString()
       })
     }, 1000);
 
-    var hours = new Date().getHours();
-
-    if(hours >= 0 && hours <= 12)
-      this.setState({cycle: 1})
-    else if (hours > 12 && hours <= 17)
-      this.setState({cycle: 2})
-    else 
-      this.setState({cycle: 3})
+    
   }
 
   render(){
