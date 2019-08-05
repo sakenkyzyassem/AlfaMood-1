@@ -14,6 +14,40 @@ export default class HistoryPage extends Component {
       todayData:null
     };
   };
+  async componentDidMount(){
+    await this.doFirst();//get server info, get info about user , get the data
+    this.setTodayDate(1);
+    this.setState({loading:false});
+  };
+  doFirst= async ()=>{
+    var server=await AsyncStorage.getItem('server');
+    var user_id= await AsyncStorage.getItem('user_id');
+    var date=new Date();
+    this.setState({server:server,user_id:user_id,date:date});
+    await this.getData();
+  }
+  getData=async()=>{
+    var data={};
+    for (var i = 0; i < 3; i++) {
+      var dateName='day'+(i+1);
+      var array={};
+      for (var j = 1; j <= 3; j++) {
+        this.setState({data:null});
+        var cycleName ='cycle'+j;
+        await this.postMethod('getMood',this.state.server,{user_id:this.state.user_id,cycle:j,day:i});
+        try{
+          array[cycleName]=this.state.data;
+          var d=array[cycleName][0];
+          GetImage(d);
+        }catch(e){
+
+        }
+      }
+      data[dateName]=array;
+    }
+    this.setState({data:data});
+  };
+
   postMethod= async(method,methodUrl,methodBody)=>{
   	await fetch('http://'+methodUrl+'/alfa/'+method+'.php',
   	{
@@ -33,46 +67,13 @@ export default class HistoryPage extends Component {
   move(){
     NavigationService.navigate('Home');
   };
-  async componentDidMount(){
-    await this.doFirst();
-    this.setTodayDate(1);
-    this.setState({loading:false});
-  };
-  doFirst= async ()=>{
-    var server=await AsyncStorage.getItem('server');
-    var user_id= await AsyncStorage.getItem('user_id');
-    var date=new Date();
-    this.setState({server:server,user_id:user_id,date:date});
-    await this.getData();
-  }
-  getData=async()=>{
-    var data={};
-    for (var i = 0; i < 7; i++) {
-      var dateName='day'+(i+1);
-      var array={};
-      for (var j = 1; j <= 3; j++) {
-        this.setState({data:null});
-        var cycleName ='cycle'+j;
-        await this.postMethod('getMood',this.state.server,{user_id:this.state.user_id,cycle:j,day:i});
-        try{
-          array[cycleName]=this.state.data;
-          var d=array[cycleName][0];
-          GetImage(d);
-        }catch(e){
-
-        }
-      }
-      data[dateName]=array;
-    }
-    this.setState({data:data});
-  };
   setTodayDate=(day)=>{
-    this.setState({todayData:null,loading:true});
+    this.setState({todayData:null});
     var date='day'+day;
     for (var i = 1; i < 4; ++i) {
       var cycle='cycle'+i;
       var check=this.state.data[date][cycle][0];
-      if(check!='undefined'){
+      if(typeof check!='undefined'){
         this.setState({todayData:this.state.data[date]});
         break;
       }
@@ -89,18 +90,16 @@ export default class HistoryPage extends Component {
               style={styles.BackgroundImage}
             />
             {
-              this.state.todayData==null ? <NoToday/>:<BigView data={this.state.todayData}/>
+              this.state.todayData==null ? <NoToday/>:<BigTodayView data={this.state.todayData}/>
             }
             <View style={styles.ButtomView}>
               <TouchableOpacity onPress={this.move}>
                 <ButtomView />
               </TouchableOpacity>
             </View>
-            <View style={styles.HistoryView}>
-              <HistoryView data={this.state.data} />
-              <HistoryView data={this.state.data} />
-              <HistoryView data={this.state.data} />
-            </View>
+
+            <BigHistoryView data={this.state.data}/>
+
           </View>
         }
       </View>
@@ -131,7 +130,6 @@ GetImage=(data)=>{
 }
 
 NoToday=()=>{
-  console.log("no Today");
   return(
     <View style={styles.TodayView}>
       <Text>
@@ -141,24 +139,24 @@ NoToday=()=>{
   );
 }
 
-BigView = (props) => {
+BigTodayView = (props) => {
   var a = Array();
   for (var i = 1; i <= 3; ++i) {
     var cycle='cycle'+i;
-      if(props.data[cycle][0]!='undefined'){
-        a[i]=true;
-      }else{a[i]=false;}
+      if(typeof props.data[cycle][0]!='undefined'){
+        a[cycle]=true;
+      }else{a[cycle]=false;}
   }
   return (
     <View style={styles.TodayView}>
       {
-        a[0] ? <TodayView data={props.data['cycle1'][0]}/>:<BlankBig/>
+        a['cycle1'] ? <TodayView data={props.data['cycle1'][0]} cycle={1}/>:<BlankBig/>
       }
       {
-        a[1] ? <TodayView data={props.data['cycle2'][0]}/>:<BlankBig/>
+        a['cycle2'] ? <TodayView data={props.data['cycle2'][0]} cycle={2}/>:<BlankBig/>
       }
       {
-        a[2] ? <TodayView data={props.data['cycle3'][0]}/>:<BlankBig/>
+        a['cycle3'] ? <TodayView data={props.data['cycle3'][0]} cycle={3}/>:<BlankBig/>
       }
     </View>
   );
@@ -171,11 +169,13 @@ TodayView = (props) => {
         style={styles.TodayViewImage}
       />
       <View style={styles.TodayViewTextView}>
-        <Text style={styles.TodayViewText}>{props.data.comment}</Text>
-        <View style={styles.TodayViewTimeView}>
-          <Text style={styles.TodayViewTime}>
-            {props.data.time}
-          </Text>
+        <View style = {styles.TodayDateInfo}>
+          <Text>CYCLE {props.cycle}</Text>
+          <Text>{props.data.time}</Text>
+        </View>
+        <View style={{height:60,width:1,backgroundColor:'black'}}/>
+        <View style={styles.TodayCommentContainer}>
+          <Text>{props.data.comment}</Text>
         </View>
       </View>
     </View>
@@ -191,30 +191,75 @@ ButtomView = (props) => {
   );
 };
 
+BigHistoryView = (props) => {
+  var dates=Array();
+  for (var day = 1; day < 4; ++day) {
+    var date='day'+day;
+    for (var i = 1; i < 4; ++i) {
+      var cycle='cycle'+i;
+      try{
+        var check=props.data[date][cycle][0];
+        if(typeof check !='undefined'){
+          dates[day]=true;
+          props.data[date].day=check.date;
+        }
+      }catch{}
+    }
+  }
+  return (
+    <View style={styles.HistoryView}>
+      {
+        dates[1] ? <HistoryView data={props.data['day1']} cycle={1}/>:null
+      }
+      {
+        dates[2] ? <HistoryView data={props.data['day2']} cycle={2}/>:null
+      }
+      {
+        dates[3] ? <HistoryView data={props.data['day3']} cycle={3}/>:null
+      }
+    </View>
+  );
+};
 HistoryView = (props) => {
+  var a = Array();
+  for (var i = 1; i <= 3; ++i) {
+    var cycle='cycle'+i;
+    if(typeof props.data[cycle][0]!='undefined'){
+      GetImage(props.data[cycle][0]);
+      a[cycle]=true;
+    }else{a[cycle]=false;}
+  }
+  console.log(props.day);
   return (
     <View style={styles.HistoryViewContainer}>
       <View style={styles.HistoryViewText}>
         <Image source={require('../assets/images/other/calendar.png')} style={styles.HistoryViewCalendar}/>
-        <Text> date is here</Text>
+        <Text>{props.data.day}</Text>
       </View>
       <View style={styles.HistoryViewImageContainer}>
-        <Image
-          source={require('../assets/images/emotions/good.png')}
-          style={styles.HistoryViewImage}
-        />
-        <Image
-          source={require('../assets/images/emotions/happy.png')}
-          style={styles.HistoryViewImage}
-        />
-        <Image
-          source={require('../assets/images/emotions/good.png')}
-          style={styles.HistoryViewImage}
-        />
+        {
+          a['cycle1'] ? <Image source={props.data.cycle1[0].image} style={styles.HistoryViewImage}/>:<BlankSmall/>
+        }
+
+        {
+          a['cycle2'] ? <Image source={props.data.cycle2[0].image} style={styles.HistoryViewImage}/>:<BlankSmall/>
+        }
+        {
+          a['cycle3'] ? <Image source={props.data.cycle3[0].image} style={styles.HistoryViewImage}/>:<BlankSmall/>
+        }
       </View>
     </View>
   );
 };
+
+PopUp=(data)=>{
+  return(
+    <View style={styles.PopupContainer}>
+      <View>
+      </View>
+    </View>
+  );
+}
 BlankBig=()=>{
   console.log('blank big');
   return(
@@ -272,17 +317,18 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     justifyContent:'center',
     alignItems:'center',
+    flexDirection:'row',
     borderRadius:15,
   },
-  TodayViewText:{
-
+  TodayDateInfo:{
+    width:'40%',
+    alignItems:'center',
+    justifyContent:'center'
   },
-  TodayViewTimeView:{
-    marginBottom:'2%',
-    marginRight:'5%'
-  },
-  TodayViewTime:{
-
+  TodayCommentContainer:{
+    width:'60%',
+    alignItems:'center',
+    justifyContent:'center'
   },
   ButtonViewImage: {
     width: 60,
