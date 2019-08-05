@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, TextInput, Text, TouchableOpacity, Image, KeyboardAvoidingView, ActivityIndicator,AsyncStorage} from 'react-native';
-import NavigationService from '../navigation/NavigationService';
 
 export default class ReasonScreen extends Component
 {
@@ -91,118 +90,110 @@ export default class ReasonScreen extends Component
     render()
     {
         const { navigation } = this.props;
-        const emotionRoute = navigation.getParam('mood', require('../assets/images/emotions/happy.png'));
-        const buttonColor = navigation.getParam('buttonColor', '#fefefe');
-        const backgroundRoute = navigation.getParam('backgroundRoute', 
-            require('../assets/images/background/happy-background.png'));
-        const textFieldColor = navigation.getParam('textFieldColor', '#fefefe');
-        return(
-            <View style = { styles.MainContainer }>
-                <Image source={backgroundRoute} style={styles.backgroundImage} resizeMode='stretch'/>
-                <View style={{flex: 1}}>
-                    <Image source={emotionRoute} style={styles.moodImage} resizeMode='stretch'/>
-                </View>
+            const emotionRoute = navigation.getParam('mood', require('../assets/images/emotions/happy.png'));
+            const buttonColor = navigation.getParam('buttonColor', '#fefefe');
+            const backgroundRoute = navigation.getParam('backgroundRoute', 
+                require('../assets/images/background/happy-background.png'));
+            const textFieldColor = navigation.getParam('textFieldColor', '#fefefe');
+            return(
+                <View style = { styles.mainContainer }>
+                    <Image source={backgroundRoute} style={styles.backgroundImage} resizeMode='stretch'/>
+                    <View style={{flex: 1}}>
+                        <Image source={emotionRoute} style={styles.moodImage} resizeMode='contain'/>
+                    </View>
 
+                    <View style={styles.container}>
+                        <Text style={styles.reasonText}>
+                          Would you like to share the reason?
+                        </Text>
 
-                <View style={styles.Container}>
-                    <Text style={styles.reasonText}>Would you like to share the reason?</Text>
-                    <TextInput
-                    style={[styles.ТextInput,{backgroundColor:buttonColor}]}
-                    placeholder="It's optional"
-                    onChangeText={(text) => this.setState({comment:text})}/>
-                     <View style={{height:'40%'}}/>
-                    
-                    <TouchableOpacity style={[styles.TextInput,{backgroundColor:buttonColor}]} onPress={this.addMood}>
-                        <View style={styles.shadow} >
+                        <TextInput
+                        style={{
+                          backgroundColor: textFieldColor,
+                          margin: 10,
+                          padding: 10,
+                          paddingLeft: 15,
+                          width:'100%',
+                          alignItems:'center',
+                          borderRadius: 25,      
+                        }}
+                        placeholder="It's optional"
+                        onChangeText={(text) => this.setState({comment:text})}/>
+
+                      <View style={{height: '35%'}}/>
+
+                        <TouchableOpacity style={{
+                          paddingTop: 10,
+                          paddingBottom: 10,
+                          backgroundColor: buttonColor,
+                          width:'100%',
+                          alignItems:'center',
+                          borderRadius: 25,
+                          shadowColor: "#ffffff",
+                          shadowOffset: {
+                            width: 0,
+                            height: 2,
+                          },
+                          shadowOpacity: 0.30,
+                          shadowRadius: 3.84,
+                          elevation: 5,
+                          }} onPress={this.addMood}>
                             <Text style = {styles.responseText}>Send my response</Text>
-                        </View>
-                    </TouchableOpacity>
-                    <View style={{height: '8%'}} />
+                        </TouchableOpacity>
+                    </View>
+                    {
+                    this.state.loading ? <ActivityIndicator color='#009688' size='large'style={styles.ActivityIndicatorStyle} /> : null          
+                    }
                 </View>
-                {
-                this.state.loading ? <ActivityIndicator color='#009688' size='large'style={styles.ActivityIndicatorStyle} /> : null          
-                }
-            </View>
         );
     }    
 }
  
-const styles = StyleSheet.create(
-{
-    KeyboardAvoidingContainer:{
-        width:'100%',
-        height:'100%',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    TextInput:{
-        paddingTop: 10,
-        paddingBottom: 10,
-        width:'100%',
-        alignItems:'center',
-        borderRadius: 25,
-        shadowColor: "black",
-        shadowOffset: {
-        width: 0,
-        height: 2,
-        },
-        shadowOpacity: 0.30,
-        shadowRadius: 3.84,
-        elevation: 5              
-    },
-    MainContainer:{
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    Container:
+    const styles = StyleSheet.create(
     {
-        flex: 1,
-        alignItems:'center',
-        width:'80%',
-        borderRadius: 30,
-        margin:'8%'
-    },
-    backgroundImage:{
-        width:'100%',
-        height:'100%',
-        position:'absolute',
-    },
-    moodImage:{
-        flex: 1,
-        aspectRatio: 1,
-        margin: 50,
-        paddingTop: '10%'
-    },
-    reasonText:{
-      color: 'white', 
-      fontSize: 18, 
-      alignSelf: 'flex-start',
-      marginTop: '15%'
-    },
-    responseText:{
-      color: 'white', 
-      fontSize: 18
-    },
-    shadow:{
-        margin: 5,
-        shadowColor: "white",
-        shadowOffset: {
-        width: 0,
-        height: 2,
+        mainContainer:
+        {
+            flex: 1,
+            alignItems: 'center'
         },
-        shadowOpacity: 0.20,
-        shadowRadius: 3.84,
-        elevation: 5,
-    },
-    ActivityIndicatorStyle:{ 
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        top: 0,
-        bottom: 0,
-        alignItems: 'center',
-        justifyContent: 'center'
-    }
-});
- 
+        container:
+        {
+            flex: 1,
+            alignItems:'center',
+            justifyContent: 'space-between',
+            width:'80%',
+            borderRadius: 30,
+            margin:'8%'
+        },
+        backgroundImage:
+        {
+            width:'100%',
+            height:'100%',
+            position:'absolute',
+        },
+        moodImage:{
+            flex: 1,
+            aspectRatio: 1,
+            margin: 50,
+            marginTop: '15%'
+        },
+        reasonText:{
+          color: 'white', 
+          fontSize: 18, 
+          alignSelf: 'flex-start',
+          marginTop: '15%'
+        },
+        responseText:{
+          color: 'white', 
+          fontSize: 18
+        },
+        ActivityIndicatorStyle:{ 
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            top: 0,
+            bottom: 0,
+            alignItems: 'center',
+            justifyContent: 'center'
+        }
+    })

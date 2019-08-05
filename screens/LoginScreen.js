@@ -1,7 +1,10 @@
 
 import React, { Component } from 'react';
-import { StyleSheet, View, TextInput, Text, ActivityIndicator, TouchableOpacity,Image,AsyncStorage} from 'react-native';
+import { StyleSheet, View, TextInput, Text, ActivityIndicator, TouchableOpacity,Image,AsyncStorage,Dimensions } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import NavigationService from '../navigation/NavigationService';
 
+let width = Dimensions.get('window').width;
 export default class LogInPage extends Component
 {
     constructor()
@@ -21,7 +24,6 @@ export default class LogInPage extends Component
         await this.checkUser();
         var server= await AsyncStorage.getItem('server');
         this.setState({server:server});
-        console.log(server);
     }
     postMethod= async(method,methodUrl,methodBody)=>{
         await fetch('http://'+methodUrl+'/alfa/'+method+'.php',
@@ -81,20 +83,28 @@ export default class LogInPage extends Component
         if(this.state.ready){
             return(
                 <View style = { styles.MainContainer }>
-                    <Image source={require('../assets/images/image.png')}/>
                     
-                    <View style={styles.Container}>
-                        
+                  <View style={styles.TopContainer}>
+                    <Image source={require('../assets/images/image.png')}/>
+                  </View>
+
+                  <View style={styles.Container}>
+                  
+                    <KeyboardAwareScrollView>  
+                      <View>
                         <TextInput
-                        style={{borderBottomColor:'gray',marginTop:15,marginLeft:10,textAlign:'center'}}
+                        style={styles.TextInput}
                         placeholder='Enter the department code'
-                        onChangeText={(text) => this.setState({department_code:text})}/>
-                        
-                        <View style={{height:'50%'}}/>
-                        
-                        <TouchableOpacity style={styles.TouchableOpacityStyle} onPress={this.signUp}>
-                            <Text>Sign up</Text>
-                        </TouchableOpacity>
+                        onChangeText={(text) => this.setState({department_code:text})}
+                        onSubmitEditing = {this.signUp}/>
+                      </View>
+                    </KeyboardAwareScrollView>
+                    
+                    <View style={{paddingBottom: -5}}>
+                      <TouchableOpacity style={styles.TouchableOpacityStyle} onPress={this.signUp}>
+                          <Text style={{color: 'white'}}>Sign In</Text>
+                      </TouchableOpacity>
+                    </View>
 
                     </View>
                     
@@ -119,32 +129,64 @@ const styles = StyleSheet.create(
     MainContainer:
     {
         flex: 1,
-        justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor:'red'
-
+        backgroundColor:'red',
+        justifyContent: 'space-around'
     },
+
+    TopContainer: 
+    {
+      height: '30%',
+      paddingTop: '8%',
+      paddingBottom: '8%'
+    },
+
+    TextInput: 
+    {
+      borderBottomColor:'gray', 
+      marginTop:15, 
+      marginLeft:10,
+      textAlign:'center'
+    },
+
     Container:
     {
-        alignItems:'center',
+        justifyContent: 'space-between',
         backgroundColor:'white',
-        height:'40%',
+        height:'53%',
         width:'80%',
         borderRadius: 30,
-        marginLeft:'5%',
-        marginRight:'5%',
+        margin:'5%',
+        paddingTop: '8%',
+        shadowColor: "#000",
+        shadowOffset: {
+          width: 0,
+          height: 5,
+        },
+        shadowOpacity: 0.5,
+        shadowRadius: 8,
+
+        elevation: 6,
     },
  
     TouchableOpacityStyle:
     {
-        paddingTop:10,
-        paddingBottom:10,
+        alignSelf: 'center',
+        paddingTop: 10,
+        paddingBottom: 10,
         backgroundColor:'#fcb604',
-        marginBottom: 20,
-        width: '80%',
+        width: width*0.65,
         alignItems:'center',
-        borderRadius:15,
+        borderRadius: 20,
+        shadowColor: "#B1B1B1",
+        shadowOffset: {
+          width: 3,
+          height: 3,
+        },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
 
+        elevation: 4,
     },
 
     ActivityIndicatorStyle:{

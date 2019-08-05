@@ -101,7 +101,7 @@ export default class HistoryPage extends Component {
               </TouchableOpacity>
             </View>
 
-            <BigHistoryView data={this.state.data} handlePress={(day)=>this.setTodayDate(day)}/>
+            <BigHistoryView data={this.state.data} handlePress={(day)=>this.setTodayDate()}/>
 
           </View>
         }
