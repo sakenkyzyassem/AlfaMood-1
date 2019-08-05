@@ -5,6 +5,7 @@ import NavigationService from '../components/NavigationService';
 export default class HistoryPage extends Component {
   constructor() {
     super();
+    this.setTodayDate=this.setTodayDate.bind(this);
     this.state = {
     	data:null,
       server:null,
@@ -68,15 +69,17 @@ export default class HistoryPage extends Component {
     NavigationService.navigate('Home');
   };
   setTodayDate=(day)=>{
-    this.setState({todayData:null});
     var date='day'+day;
     for (var i = 1; i < 4; ++i) {
       var cycle='cycle'+i;
-      var check=this.state.data[date][cycle][0];
-      if(typeof check!='undefined'){
-        this.setState({todayData:this.state.data[date]});
-        break;
-      }
+      try{
+        var check=this.state.data[date][cycle][0];
+        if(typeof check!='undefined'){
+          this.setState({todayData:this.state.data[date]});
+          break;
+        }
+      }catch
+      {}
     }
   }
   render() {
@@ -98,7 +101,7 @@ export default class HistoryPage extends Component {
               </TouchableOpacity>
             </View>
 
-            <BigHistoryView data={this.state.data}/>
+            <BigHistoryView data={this.state.data} handlePress={(day)=>this.setTodayDate(day)}/>
 
           </View>
         }
@@ -209,13 +212,13 @@ BigHistoryView = (props) => {
   return (
     <View style={styles.HistoryView}>
       {
-        dates[1] ? <HistoryView data={props.data['day1']} cycle={1}/>:null
+        dates[1] ? <HistoryView data={props.data['day1']} handlePress={()=>props.handlePress(1)}/>:<BlankNorm/>
       }
       {
-        dates[2] ? <HistoryView data={props.data['day2']} cycle={2}/>:null
+        dates[2] ? <HistoryView data={props.data['day2']} handlePress={()=>props.handlePress(2)}/>:<BlankNorm/>
       }
       {
-        dates[3] ? <HistoryView data={props.data['day3']} cycle={3}/>:null
+        dates[3] ? <HistoryView data={props.data['day3']} handlePress={()=>props.handlePress(3)}/>:<BlankNorm/>
       }
     </View>
   );
@@ -229,14 +232,13 @@ HistoryView = (props) => {
       a[cycle]=true;
     }else{a[cycle]=false;}
   }
-  console.log(props.day);
   return (
     <View style={styles.HistoryViewContainer}>
       <View style={styles.HistoryViewText}>
         <Image source={require('../assets/images/other/calendar.png')} style={styles.HistoryViewCalendar}/>
         <Text>{props.data.day}</Text>
       </View>
-      <View style={styles.HistoryViewImageContainer}>
+      <TouchableOpacity style={styles.HistoryViewImageContainer} onPress={props.handlePress}>
         {
           a['cycle1'] ? <Image source={props.data.cycle1[0].image} style={styles.HistoryViewImage}/>:<BlankSmall/>
         }
@@ -247,7 +249,7 @@ HistoryView = (props) => {
         {
           a['cycle3'] ? <Image source={props.data.cycle3[0].image} style={styles.HistoryViewImage}/>:<BlankSmall/>
         }
-      </View>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -261,20 +263,23 @@ PopUp=(data)=>{
   );
 }
 BlankBig=()=>{
-  console.log('blank big');
   return(
-    <View style={BlankBig}>
-    </View>
+    <View style={styles.BlankBig}/>
   );
 }
-BlankSmall=()=>{
-  return(
+BlankNorm=()=>{
+  return (
+    <View style={styles.BlankNorm}/>
+  );
+}
+BlankSmall=()=>{return(
     <View style={BlankSmall}>
     </View>
   );
 }
 const styles = StyleSheet.create({
   BlankBig:{height:'15%'},
+  BlankNorm:{width: '30%',height: '100%',},
   BlankSmall:{height:30},
   MainContainer: {
     flex:1,
