@@ -23,9 +23,10 @@ export default class LogInPage extends Component
     async componentDidMount(){
         var server= await AsyncStorage.getItem('server');
         this.setState({server:server});
+        console.log(server);
     }
     postMethod= async(method,methodUrl,methodBody)=>{
-        await fetch('http://'+methodUrl+'/alfa/'+method+'.php',
+        await fetch('https://'+methodUrl+'/alfa/'+method+'.php',
         {
             method: 'POST',
             headers: 
@@ -63,10 +64,10 @@ export default class LogInPage extends Component
         await this.postMethod('addUser',this.state.server,{department_id:this.state.department_id});
         this.setState({loading:false,user_id:this.state.data[0][0]});
         AsyncStorage.setItem('user_id',this.state.user_id);
+        this.props.navigation.navigate('NavigatorStack');
     }
     move = () => {
         this.checkDep();
-        this.props.navigation.navigate('NavigatorStack');
     }
     render()
     {
@@ -168,5 +169,14 @@ const styles = StyleSheet.create(
         shadowRadius: 8,
 
         elevation: 4,
+    },
+    ActivityIndicatorStyle:{ 
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
+        alignItems: 'center',
+        justifyContent: 'center'
     }
 });

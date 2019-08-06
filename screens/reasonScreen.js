@@ -73,7 +73,7 @@ export default class ReasonScreen extends Component
 
 
     postMethod= async(method,methodUrl,methodBody)=>{
-        await fetch('http://'+methodUrl+'/alfa/'+method+'.php',
+        await fetch('https://'+methodUrl+'/alfa/'+method+'.php',
         {
             method: 'POST',
             headers: 

@@ -46,13 +46,8 @@ export default class HomeScreen extends React.Component {
 
     var cellDate = await AsyncStorage.getItem('date');
     var cellCycle= await AsyncStorage.getItem('cycle');
-    console.log(cellDate+"cell date");
-    console.log(this.state.curDate+"current date");
-    console.log(cellDate==this.state.curDate);
     if(this.state.curDate==cellDate){
-      console.log("here");
         if(this.state.cycle==cellCycle){
-            console.log("here");
             this.setState({voted:true});
         }
     }

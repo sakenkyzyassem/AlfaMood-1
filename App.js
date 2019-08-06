@@ -21,6 +21,7 @@ class AuthLoadingScreen extends React.Component {
 
   _bootstrapAsync = async()=>{
         var user_id = await AsyncStorage.getItem('user_id');  
+        console.log(user_id);
 
         this.props.navigation.navigate(user_id ? 'App' : 'Auth');
     }
@@ -49,7 +50,8 @@ const VoteScreen = createStackNavigator(
   }
 );
 
-const NavigatorStack = createMaterialTopTabNavigator ({
+const NavigatorStack = createMaterialTopTabNavigator (
+{
   Vote: {
     screen: VoteScreen,
     navigationOptions:{
@@ -67,23 +69,23 @@ const NavigatorStack = createMaterialTopTabNavigator ({
     }
   }
 },
-  {
-    initialRouteName: 'Vote',
-    tabBarPosition: 'bottom',
-    tabBarOptions: {
-      activeTintColor: 'red',
-      inactiveTintColor: 'grey',
-      style: {
-        backgroundColor: '#f2f2f2',
-        topBorderColor: 'grey',
-        borderTopWidth: 0.3,
-      },
-      indicatorStyle: {
-        height: 0
-      },
-      showIcon: true
-    }
+{
+  initialRouteName: 'Vote',
+  tabBarPosition: 'bottom',
+  tabBarOptions: {
+    activeTintColor: 'red',
+    inactiveTintColor: 'grey',
+    style: {
+      backgroundColor: '#f2f2f2',
+      topBorderColor: 'grey',
+      borderTopWidth: 0.3,
+    },
+    indicatorStyle: {
+      height: 0
+    },
+    showIcon: true
   }
+}
 )
 
 
@@ -115,12 +117,26 @@ const AppContainer = createAppContainer(createSwitchNavigator(
 }
 ));
 
+const styles = StyleSheet.create(
+{
+  ActivityIndicatorStyle:{
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center'
+  }
+})
 export default class App extends React.Component {
 
   async componentDidMount(){
-    var server='192.168.1.15';
+
+    var server='alfamooddatabase.000webhostapp.com';
     await AsyncStorage.setItem('server', server);
     var s = await AsyncStorage.getItem('server');
+    console.log(s);
   }
   render() {
     return (
@@ -134,18 +150,4 @@ export default class App extends React.Component {
   }
 }
 
-const styles = StyleSheet.create(
-{
-  ActivityIndicatorStyle:{
-      
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    alignItems: 'center',
-    justifyContent: 'center'
-
-  }
-})
 

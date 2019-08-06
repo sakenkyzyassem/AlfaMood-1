@@ -50,7 +50,7 @@ export default class HistoryPage extends Component {
   };
 
   postMethod= async(method,methodUrl,methodBody)=>{
-  	await fetch('http://'+methodUrl+'/alfa/'+method+'.php',
+  	await fetch('https://'+methodUrl+'/alfa/'+method+'.php',
   	{
   	    method: 'POST',
   	    headers: 
@@ -98,8 +98,10 @@ export default class HistoryPage extends Component {
               this.state.todayData==null ? <NoToday/>:<BigTodayView data={this.state.todayData}/>
             }
 
-            <View style={{height: '10%'}} />
-            
+            <TouchableOpacity style={{height: '10%',justifyContent:'center',alignItems:'center'}} onPress={()=>this.getData()}>
+              <Image source={require('../assets/icons/refresh.png')} style={{width:30,height:30}}/>
+            </TouchableOpacity>
+
             <BigHistoryView data={this.state.data} handlePress={(day)=>this.setTodayDate(day)}/>
 
           </View>
