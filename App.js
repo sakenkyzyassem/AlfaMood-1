@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {AsyncStorage, SafeAreaView, StyleSheet, View, ActivityIndicator } from 'react-native';
+import {AsyncStorage, SafeAreaView, StyleSheet, View, ActivityIndicator,Image,TouchableOpacity } from 'react-native';
 
 import HomeScreen from './screens/HomeScreen.js';
 import HistoryScreen from './screens/HistoryScreen.js';
@@ -23,7 +23,7 @@ class AuthLoadingScreen extends React.Component {
         var user_id = await AsyncStorage.getItem('user_id');  
         console.log(user_id);
 
-        this.props.navigation.navigate(user_id ? 'App' : 'Auth');
+        this.props.navigation.navigate( user_id ? "App":'Auth');
     }
 
   render() {
@@ -38,7 +38,20 @@ class AuthLoadingScreen extends React.Component {
 const VoteScreen = createStackNavigator(
   {
     Home: HomeScreen,
-    Reason: ReasonScreen,
+    Reason: {
+      screen:ReasonScreen,
+      navigationOptions:{
+        header:true,
+        headerVisible:false,
+        headerLeft: (
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Reason')}
+          >
+            <Image source ={require('./assets/icons/back.png')} style={{width:30,height:30}}/>
+          </TouchableOpacity>
+        ),
+      }
+    }  
   },
   {
     initialRouteName: 'Home',
@@ -119,6 +132,12 @@ const AppContainer = createAppContainer(createSwitchNavigator(
 
 const styles = StyleSheet.create(
 {
+  MainContainer:
+  {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'space-around'
+  },
   ActivityIndicatorStyle:{
     position: 'absolute',
     left: 0,

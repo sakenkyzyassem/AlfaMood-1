@@ -35,7 +35,9 @@ export default class HistoryPage extends Component {
       for (var j = 1; j <= 3; j++) {
         this.setState({data:null});
         var cycleName ='cycle'+j;
+        try{
         await this.postMethod('getMood',this.state.server,{user_id:this.state.user_id,cycle:j,day:i});
+        }catch{setState({loading:false});alert("Something went wrong")}
         try{
           array[cycleName]=this.state.data;
           var d=array[cycleName][0];
@@ -48,6 +50,11 @@ export default class HistoryPage extends Component {
     }
     this.setState({data:data});
   };
+  refresh=async()=>{
+    this.setState({loading:true});
+    await this.getData();
+    this.setState({loading:false});
+  }
 
   postMethod= async(method,methodUrl,methodBody)=>{
   	await fetch('https://'+methodUrl+'/alfa/'+method+'.php',
@@ -98,7 +105,7 @@ export default class HistoryPage extends Component {
               this.state.todayData==null ? <NoToday/>:<BigTodayView data={this.state.todayData}/>
             }
 
-            <TouchableOpacity style={{height: '10%',justifyContent:'center',alignItems:'center'}} onPress={()=>this.getData()}>
+            <TouchableOpacity style={{height: '10%',justifyContent:'center',alignItems:'center'}} onPress={()=>this.refresh()}>
               <Image source={require('../assets/icons/refresh.png')} style={{width:30,height:30}}/>
             </TouchableOpacity>
 

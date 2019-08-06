@@ -17,7 +17,6 @@ export default class LogInPage extends Component
           loading: false, 
           data:null,
           server:null,
-          ready:false
         }
     }
     async componentDidMount(){
@@ -46,34 +45,40 @@ export default class LogInPage extends Component
     {
         this.setState({loading:true, department_id:''});
         await this.postMethod('checkCode',this.state.server,{code:this.state.department_code});
-        this.setState({loading:false})
         this.move();
+    }
+    move = () => {
+        this.checkDep();
+        this.setState({loading:false})
     }
     checkDep=async()=>{
         try{
             this.setState({department_id:this.state.data[0]['department_id']});
             await AsyncStorage.setItem('department_id',this.state.department_id);
-            await this.addUser();
         }
         catch(e){
-            alert("Wrong Code!")
+            alert("Wrong Code!");
         }
     }
     addUser=async()=>{
-        this.setState({loading:true});
-        await this.postMethod('addUser',this.state.server,{department_id:this.state.department_id});
-        this.setState({loading:false,user_id:this.state.data[0][0]});
-        AsyncStorage.setItem('user_id',this.state.user_id);
-        this.props.navigation.navigate('NavigatorStack');
+        try{
+            await this.postMethod('addUser',this.state.server,{department_id:this.state.department_id});
+            this.setState({user_id:this.state.data[0][0]});
+            await AsyncStorage.setItem('user_id',this.state.user_id);
+            this.setState({loading:false})
+            this.props.navigation.navigate('NavigatorStack');
+        }catch{alert('Something went wrong with user addition to the db')}
     }
-    move = () => {
-        this.checkDep();
-    }
-    render()
-    {
+    Activ=()=>{
         return(
-            <View style = { styles.MainContainer }>
-                
+            <View style={styles.MainContainer}>
+                <ActivityIndicator color='#009688' size='large'style={styles.ActivityIndicatorStyle} />
+            </View>
+        );
+    }
+    Page=()=>{
+        return(
+            <View style={styles.MainContainer}>
               <View style={styles.TopContainer}>
                 <Image source={require('../assets/images/image.png')}/>
               </View>
@@ -97,11 +102,16 @@ export default class LogInPage extends Component
                 </View>
 
                 </View>
-                
+            </View>
+        );
+    }
+    render()
+    {
+        return(
+            <View style={{width:'100%',height:'100%'}} >
                 {
-                this.state.loading ? <ActivityIndicator color='#009688' size='large'style={styles.ActivityIndicatorStyle} /> : null          
+                    this.state.loading ? this.Activ : this.Page
                 }
-                
             </View>
         );
     }
@@ -177,6 +187,6 @@ const styles = StyleSheet.create(
         top: 0,
         bottom: 0,
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
     }
 });

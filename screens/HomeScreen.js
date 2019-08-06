@@ -5,7 +5,8 @@ import {
   View, 
   Image, 
   Text,
-  AsyncStorage
+  AsyncStorage,
+  ActivityIndicator
 } from 'react-native';
 
 import Swipeable from '../components/Swipe';
@@ -22,7 +23,8 @@ export default class HomeScreen extends React.Component {
       curTime: '',
       curDate: '',
       cycle: '',
-      voted: false
+      voted: false,
+      loading :true
     };
   }
 
@@ -52,42 +54,57 @@ export default class HomeScreen extends React.Component {
         }
     }
 
-    
+    this.setState({loading:false});
   }
 
   render(){
     return (
-      <View style={styles.container} >
+      <View style={styles.container}>
         <View style={{ flex: 2 }}>
-          <Text style={styles.text}>HOW ARE YOU?</Text>
-          <View style={{ flexDirection: 'row', justifyContent: 'center'}}>
-            <Text style={styles.date}>
-              <Image style={styles.icon} 
-              source={require('../assets/images/other/calendar.png')} />
-              {this.state.curDate}
-            </Text>
-            <View style={{width:'10%'}} />
-            <Text style={{fontSize: 15, color: '#257DD9'}}>
-              <Image style={styles.icon} 
-              source={require('../assets/images/other/time.png')} />
-              CYCLE {this.state.cycle}
-            </Text>
-          </View>
-        </View> 
-        
-        <View style={{padding: '6%'}} />
-
-        <View style ={{flex: 4}}>
-          {
-            this.state.voted ? <Preloader />:<Swipeable navigation = {this.props.navigation} />
-          }
+        <Text style={styles.text}>HOW ARE YOU?</Text>
+        <View style={{ flexDirection: 'row', justifyContent: 'center'}}>
+          <Text style={styles.date}>
+            <Image style={styles.icon} 
+            source={require('../assets/images/other/calendar.png')} />
+            {this.state.curDate}
+          </Text>
+          <View style={{width:'10%'}} />
+          <Text style={{fontSize: 15, color: '#257DD9'}}>
+            <Image style={styles.icon} 
+            source={require('../assets/images/other/time.png')} />
+            CYCLE {this.state.cycle}
+          </Text>
         </View>
+      </View> 
+      
+      <View style={{padding: '6%'}} />
+
+      <View style ={{flex: 4}}>
+        {
+          this.state.voted ? <Preloader />:<Swipeable navigation = {this.props.navigation} />
+        }
       </View>
+    </View>
      )
   };
 }
 
 const styles = StyleSheet.create({
+  MainContainer:
+  {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  ActivityIndicatorStyle:{ 
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      top: 0,
+      bottom: 0,
+      alignItems: 'center',
+      justifyContent: 'center'
+  },
   container: 
   {
     backgroundColor: '#F6F6F6',
