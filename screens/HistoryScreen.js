@@ -86,8 +86,10 @@ export default class HistoryPage extends Component {
     return (
       <View style={[styles.MainContainer,{backgroundColor:'white'}]}>
         {
-          this.state.loading ? <ActivityIndicator color='#009688' size='large'style={styles.ActivityIndicatorStyle} /> : 
+          this.state.loading ? <ActivityIndicator color='#009688' size='large' style={styles.ActivityIndicatorStyle} /> : 
+          
           <View style={styles.MainContainer}>
+
             <Image
               source={require('../assets/images/background/stats-background.png')}
               style={styles.BackgroundImage}
@@ -95,13 +97,10 @@ export default class HistoryPage extends Component {
             {
               this.state.todayData==null ? <NoToday/>:<BigTodayView data={this.state.todayData}/>
             }
-            <View style={styles.ButtomView}>
-              <TouchableOpacity onPress={this.move}>
-                <ButtomView />
-              </TouchableOpacity>
-            </View>
 
-            <BigHistoryView data={this.state.data} handlePress={(day)=>this.setTodayDate()}/>
+            <View style={{height: '10%'}} />
+            
+            <BigHistoryView data={this.state.data} handlePress={(day)=>this.setTodayDate(day)}/>
 
           </View>
         }
@@ -182,15 +181,6 @@ TodayView = (props) => {
         </View>
       </View>
     </View>
-  );
-};
-
-ButtomView = (props) => {
-  return (
-    <Image
-      source={require('../assets/images/other/add.png')}
-      style={styles.ButtonViewImage}
-    />
   );
 };
 
@@ -370,4 +360,13 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
   },
+  ActivityIndicatorStyle:{
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center'
+  }
 });

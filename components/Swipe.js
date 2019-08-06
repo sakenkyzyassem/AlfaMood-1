@@ -5,6 +5,7 @@ import PanGestureRight from './SnappableRight.js';
 import PanGestureLeft from './SnappableLeft.js';
 
 export default class Swipeable extends Component {
+  
   constructor(props) {
     super(props);
     this.state = {
@@ -13,7 +14,7 @@ export default class Swipeable extends Component {
     };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     setInterval( () => {
       this.setState({
         curDate : new Date().toDateString()
@@ -38,7 +39,7 @@ export default class Swipeable extends Component {
           <PanGestureRight 
             title = 'happy' 
             navigation = {this.props.navigation} 
-            info={[this.state.curDate,this.state.cycle]} >
+            info={[this.state.curDate, this.state.cycle]} >
             <Image source={require('../assets/images/pangesture/happy.png')} style={styles.boxLeft} />
           </PanGestureRight>
         </View>
@@ -98,8 +99,9 @@ const styles = StyleSheet.create({
   },
   boxRight: {
     resizeMode: 'contain',
-    width: '85%',
+    width: '80%',
     alignSelf: 'flex-end',
+    marginRight: -3,
     shadowColor: "black",
     shadowOffset: {
       width: 3,
@@ -111,8 +113,9 @@ const styles = StyleSheet.create({
   },
   boxLeft: {
     resizeMode: 'contain',
-    width: '85%',
+    width: '80%',
     alignSelf: 'flex-start',
+    marginLeft: -3,
     shadowColor: "black",
     shadowOffset: {
       width: 3,

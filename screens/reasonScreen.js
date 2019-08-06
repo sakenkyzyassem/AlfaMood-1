@@ -62,9 +62,11 @@ export default class ReasonScreen extends Component
             await AsyncStorage.setItem('cycle',''+this.state.cycle);
             this.setState({loading:false});
             alert(this.state.data.data);
+            this.props.navigation.navigate('History');
         }
         else{
             alert('No more votes this cycle (But, maybe, in the future we would add some feature so that you could editthe vote)');
+            this.props.navigation.navigate('History');
         }
     }
 
@@ -117,10 +119,11 @@ export default class ReasonScreen extends Component
                           alignItems:'center',
                           borderRadius: 25,      
                         }}
+                        onSubmitEditing = {this.addMood}
                         placeholder="It's optional"
                         onChangeText={(text) => this.setState({comment:text})}/>
 
-                      <View style={{height: '35%'}}/>
+                      <View style={{height: '30%'}}/>
 
                         <TouchableOpacity style={{
                           paddingTop: 10,

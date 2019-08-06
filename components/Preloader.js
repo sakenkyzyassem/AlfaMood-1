@@ -18,7 +18,7 @@ const icons1 = [
 ];
 
 const icons2 = [
-  require('../assets/images/smiley/happy (1).png'), null,
+  require('../assets/images/smiley/happy(1).png'), null,
   require('../assets/images/smiley/happy.png'), null,
   require('../assets/images/smiley/heart.png'), null,
   require('../assets/images/smiley/love.png'), null,
@@ -27,9 +27,9 @@ const icons2 = [
 
 const icons3 = [
   require('../assets/images/smiley/mobile.png'), 
-  require('../assets/images/smiley/mobile (1).png'),
-  require('../assets/images/smiley/mobile (2).png'),
-  require('../assets/images/smiley/mobile (4).png'),
+  require('../assets/images/smiley/mobile(1).png'),
+  require('../assets/images/smiley/mobile(2).png'),
+  require('../assets/images/smiley/mobile(4).png'),
 ];
 
 export default class App extends Component {
@@ -53,8 +53,8 @@ export default class App extends Component {
     else 
       this.icon = icons1
 
-    this.setState({heightLeft: -heightD*0.3})
-    this.setState({heightRight: -heightD*0.4})
+    this.setState({heightLeft: heightD*0.28})
+    this.setState({heightRight: -heightD*0.20})
   }
 
   render() {

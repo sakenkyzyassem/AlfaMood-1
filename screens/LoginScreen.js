@@ -21,7 +21,6 @@ export default class LogInPage extends Component
         }
     }
     async componentDidMount(){
-        await this.checkUser();
         var server= await AsyncStorage.getItem('server');
         this.setState({server:server});
     }
@@ -44,7 +43,7 @@ export default class LogInPage extends Component
     };
     signUp = async () =>
     {
-        this.setState({loading:true,department_id:''});
+        this.setState({loading:true, department_id:''});
         await this.postMethod('checkCode',this.state.server,{code:this.state.department_code});
         this.setState({loading:false})
         this.move();
@@ -59,15 +58,6 @@ export default class LogInPage extends Component
             alert("Wrong Code!")
         }
     }
-    checkUser= async()=>{
-        var user_id= await AsyncStorage.getItem('user_id');    
-        if(user_id==null){
-            this.setState({ready:true});
-        }
-        else{
-            this.props.navigation.navigate('Home');
-        }
-    }
     addUser=async()=>{
         this.setState({loading:true});
         await this.postMethod('addUser',this.state.server,{department_id:this.state.department_id});
@@ -76,52 +66,43 @@ export default class LogInPage extends Component
     }
     move = () => {
         this.checkDep();
-        this.props.navigation.navigate('Home');
+        this.props.navigation.navigate('NavigatorStack');
     }
     render()
     {
-        if(this.state.ready){
-            return(
-                <View style = { styles.MainContainer }>
-                    
-                  <View style={styles.TopContainer}>
-                    <Image source={require('../assets/images/image.png')}/>
+        return(
+            <View style = { styles.MainContainer }>
+                
+              <View style={styles.TopContainer}>
+                <Image source={require('../assets/images/image.png')}/>
+              </View>
+
+              <View style={styles.Container}>
+              
+                <KeyboardAwareScrollView>  
+                  <View>
+                    <TextInput
+                    style={styles.TextInput}
+                    placeholder='Enter the department code'
+                    onChangeText={(text) => this.setState({department_code:text})}
+                    onSubmitEditing = {this.signUp}/>
                   </View>
-
-                  <View style={styles.Container}>
-                  
-                    <KeyboardAwareScrollView>  
-                      <View>
-                        <TextInput
-                        style={styles.TextInput}
-                        placeholder='Enter the department code'
-                        onChangeText={(text) => this.setState({department_code:text})}
-                        onSubmitEditing = {this.signUp}/>
-                      </View>
-                    </KeyboardAwareScrollView>
-                    
-                    <View style={{paddingBottom: -5}}>
-                      <TouchableOpacity style={styles.TouchableOpacityStyle} onPress={this.signUp}>
-                          <Text style={{color: 'white'}}>Sign In</Text>
-                      </TouchableOpacity>
-                    </View>
-
-                    </View>
-                    
-                    {
-                    this.state.loading ? <ActivityIndicator color='#009688' size='large'style={styles.ActivityIndicatorStyle} /> : null          
-                    }
-                    
+                </KeyboardAwareScrollView>
+                
+                <View style={{paddingBottom: -5}}>
+                  <TouchableOpacity style={styles.TouchableOpacityStyle} onPress={this.signUp}>
+                      <Text style={{color: 'white'}}>Sign In</Text>
+                  </TouchableOpacity>
                 </View>
-            );
-        }
-        else{
-            return(
-                <View style={[styles.MainContainer,{backgroundColor:'white'}]}>
-                    <ActivityIndicator color='#009688' size='large'style={styles.ActivityIndicatorStyle} />
+
                 </View>
-            );
-        }
+                
+                {
+                this.state.loading ? <ActivityIndicator color='#009688' size='large'style={styles.ActivityIndicatorStyle} /> : null          
+                }
+                
+            </View>
+        );
     }
 }
 const styles = StyleSheet.create(
@@ -187,17 +168,5 @@ const styles = StyleSheet.create(
         shadowRadius: 8,
 
         elevation: 4,
-    },
-
-    ActivityIndicatorStyle:{
-      
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        top: 0,
-        bottom: 0,
-        alignItems: 'center',
-        justifyContent: 'center'
-    
-  }
+    }
 });

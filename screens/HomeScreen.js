@@ -5,21 +5,17 @@ import {
   View, 
   Image, 
   Text,
+  AsyncStorage
 } from 'react-native';
 
-import ActionBarImage from '../components/ActionBarImage.js';
 import Swipeable from '../components/Swipe';
 import Preloader from '../components/Preloader';
 
 export default class HomeScreen extends React.Component {
 
-  static navigationOptions = {      
-    headerRight: <ActionBarImage />,
-    headerMode: 'screen',
-    headerLeft: null,
-    gesturesEnabled:false,
+  static navigationOptions ={
+    header: null
   }
-
   constructor(props) {
     super(props);
     this.state = {
@@ -30,21 +26,36 @@ export default class HomeScreen extends React.Component {
     };
   }
 
-  componentDidMount() {
+  async componentDidMount() {
+    var hours = new Date().getHours();  
     setInterval( () => {
       var hours = new Date().getHours();
 
-      if(hours >= 0 && hours <= 12)
-        this.setState({cycle: 1})
-      else if (hours > 12 && hours <= 17)
-        this.setState({cycle: 2})
-      else 
-        this.setState({cycle: 3})
-      
-      this.setState({
-        curDate : new Date().toDateString()
-      })
     }, 1000);
+
+    if(hours >= 0 && hours <= 12)
+      this.setState({cycle: 1})
+    else if (hours > 12 && hours <= 17)
+      this.setState({cycle: 2})
+    else 
+      this.setState({cycle: 3})
+    
+    this.setState({
+      curDate : new Date().toDateString()
+    })
+
+    var cellDate = await AsyncStorage.getItem('date');
+    var cellCycle= await AsyncStorage.getItem('cycle');
+    console.log(cellDate+"cell date");
+    console.log(this.state.curDate+"current date");
+    console.log(cellDate==this.state.curDate);
+    if(this.state.curDate==cellDate){
+      console.log("here");
+        if(this.state.cycle==cellCycle){
+            console.log("here");
+            this.setState({voted:true});
+        }
+    }
 
     
   }
@@ -91,7 +102,7 @@ const styles = StyleSheet.create({
   {
     flex: 1,
     alignSelf: 'center',
-    marginTop: '30%',
+    marginTop: '25%',
     fontSize: 32,
     color: '#FCB604'
   },
