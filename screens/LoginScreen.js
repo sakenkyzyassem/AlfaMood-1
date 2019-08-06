@@ -55,6 +55,7 @@ export default class LogInPage extends Component
         try{
             this.setState({department_id:this.state.data[0]['department_id']});
             await AsyncStorage.setItem('department_id',this.state.department_id);
+            await this.addUser();
         }
         catch(e){
             alert("Wrong Code!");
@@ -69,15 +70,14 @@ export default class LogInPage extends Component
             this.props.navigation.navigate('NavigatorStack');
         }catch{alert('Something went wrong with user addition to the db')}
     }
-    Activ=()=>{
+    render()
+    {
         return(
-            <View style={styles.MainContainer}>
+            <View style={{width:'100%',height:'100%'}} >
+                {
+                    this.state.loading ? <View style={styles.MainContainer}>
                 <ActivityIndicator color='#009688' size='large'style={styles.ActivityIndicatorStyle} />
-            </View>
-        );
-    }
-    Page=()=>{
-        return(
+            </View> : 
             <View style={styles.MainContainer}>
               <View style={styles.TopContainer}>
                 <Image source={require('../assets/images/image.png')}/>
@@ -103,14 +103,6 @@ export default class LogInPage extends Component
 
                 </View>
             </View>
-        );
-    }
-    render()
-    {
-        return(
-            <View style={{width:'100%',height:'100%'}} >
-                {
-                    this.state.loading ? this.Activ : this.Page
                 }
             </View>
         );
