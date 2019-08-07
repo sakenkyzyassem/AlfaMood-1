@@ -16,7 +16,8 @@ export default class ReasonScreen extends Component
             cycle:null,
             user_id:null,
             department_id:null,
-            server:null
+            server:null,
+            timeZone:null
         };
     }
     vote=async () =>{
@@ -36,9 +37,11 @@ export default class ReasonScreen extends Component
     async componentDidMount(){ 
         const {navigation} = this.props;
         var server=await AsyncStorage.getItem('server');
+        var timeZone=await AsyncStorage.getItem('timeZone');
+        this.setState({server:server,timeZone:timeZone});
         var date =navigation.getParam('info')[0];
         var cycle =navigation.getParam('info')[1];
-        this.setState({date:date,cycle:cycle,server:server});
+        this.setState({date:date,cycle:cycle});
         try{
             var user = await AsyncStorage.getItem('user_id');
             var department=await AsyncStorage.getItem('department_id');
@@ -53,6 +56,7 @@ export default class ReasonScreen extends Component
             var mood=navigation.getParam('title');
             this.setState({loading:true});
             await this.postMethod('addMood',this.state.server,{
+                timeZone:this.state.timeZone,
                 comment:this.state.comment,
                 rate:mood,
                 cycle:this.state.cycle,

@@ -12,19 +12,22 @@ export default class HistoryPage extends Component {
       user_id:null,
       date:null,
       loading:true,
-      todayData:null
+      todayData:null,
+      timeZone:null
     };
   };
   async componentDidMount(){
     await this.doFirst();//get server info, get info about user , get the data
     this.setTodayDate(1);
     this.setState({loading:false});
+
   };
   doFirst= async ()=>{
     var server=await AsyncStorage.getItem('server');
+    var timeZone=await AsyncStorage.getItem('timeZone');
     var user_id= await AsyncStorage.getItem('user_id');
     var date=new Date();
-    this.setState({server:server,user_id:user_id,date:date});
+    this.setState({server:server,user_id:user_id,date:date,timeZone:timeZone});
     await this.getData();
   }
   getData=async()=>{
@@ -36,8 +39,8 @@ export default class HistoryPage extends Component {
         this.setState({data:null});
         var cycleName ='cycle'+j;
         try{
-        await this.postMethod('getMood',this.state.server,{user_id:this.state.user_id,cycle:j,day:i});
-        }catch{setState({loading:false});alert("Something went wrong")}
+        await this.postMethod('getMood',this.state.server,{user_id:this.state.user_id,cycle:j,day:i,timeZone:this.state.timeZone});
+        }catch{this.setState({loading:false});alert("Something went wrong")}
         try{
           array[cycleName]=this.state.data;
           var d=array[cycleName][0];

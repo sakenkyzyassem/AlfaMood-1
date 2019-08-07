@@ -17,11 +17,13 @@ export default class LogInPage extends Component
           loading: false, 
           data:null,
           server:null,
+          timeZone:null
         }
     }
     async componentDidMount(){
         var server= await AsyncStorage.getItem('server');
-        this.setState({server:server});
+        var timeZone=await AsyncStorage.getItem('timeZone');
+        this.setState({server:server,timeZone:timeZone});
         console.log(server);
     }
     postMethod= async(method,methodUrl,methodBody)=>{
@@ -44,7 +46,7 @@ export default class LogInPage extends Component
     signUp = async () =>
     {
         this.setState({loading:true, department_id:''});
-        await this.postMethod('checkCode',this.state.server,{code:this.state.department_code});
+        await this.postMethod('checkCode',this.state.server,{code:this.state.department_code,timeZone:this.state.timeZone});
         this.move();
     }
     move = () => {
@@ -63,10 +65,9 @@ export default class LogInPage extends Component
     }
     addUser=async()=>{
         try{
-            await this.postMethod('addUser',this.state.server,{department_id:this.state.department_id});
+            await this.postMethod('addUser',this.state.server,{department_id:this.state.department_id,timeZone:this.state.timeZone});
             this.setState({user_id:this.state.data[0][0]});
             await AsyncStorage.setItem('user_id',this.state.user_id);
-            this.setState({loading:false})
             this.props.navigation.navigate('NavigatorStack');
         }catch{alert('Something went wrong with user addition to the db')}
     }

@@ -18,10 +18,19 @@ class AuthLoadingScreen extends React.Component {
     },
     this._bootstrapAsync();
   }
-
   _bootstrapAsync = async()=>{
         var user_id = await AsyncStorage.getItem('user_id');  
         console.log(user_id);
+        var date=new Date();
+        var timeZone=(-date.getTimezoneOffset()/60);
+        if(timeZone>0){
+          timeZone='+'+timeZone+":00"; 
+        }
+        else{
+          timeZone='-'+timeZone+':00';
+        }
+        console.log(timeZone);
+        await AsyncStorage.setItem('timeZone',timeZone);
 
         this.props.navigation.navigate( user_id ? "App":'Auth');
     }
@@ -41,9 +50,7 @@ const VoteScreen = createStackNavigator(
     Reason: {
       screen:ReasonScreen,
       navigationOptions:{
-        header:true,
-        headerVisible:false,
-        headerLeft: (
+        headerRight: (
           <TouchableOpacity
             onPress={() => navigation.navigate('Reason')}
           >
