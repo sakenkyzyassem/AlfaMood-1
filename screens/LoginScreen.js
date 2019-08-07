@@ -51,7 +51,6 @@ export default class LogInPage extends Component
     }
     move = () => {
         this.checkDep();
-        this.setState({loading:false})
     }
     checkDep=async()=>{
         try{
@@ -60,7 +59,8 @@ export default class LogInPage extends Component
             await this.addUser();
         }
         catch(e){
-            alert("Wrong Code!");
+            alert("Не правильный код!");
+            this.setState({loading:false});
         }
     }
     addUser=async()=>{
@@ -68,8 +68,8 @@ export default class LogInPage extends Component
             await this.postMethod('addUser',this.state.server,{department_id:this.state.department_id,timeZone:this.state.timeZone});
             this.setState({user_id:this.state.data[0][0]});
             await AsyncStorage.setItem('user_id',this.state.user_id);
-            this.props.navigation.navigate('NavigatorStack');
-        }catch{alert('Something went wrong with user addition to the db')}
+            this.props.navigation.navigate('App');
+        }catch{alert('Не удалось добавить аккаунт');this.setState({loading:false});}
     }
     render()
     {
@@ -86,19 +86,19 @@ export default class LogInPage extends Component
 
               <View style={styles.Container}>
               
-                <KeyboardAwareScrollView>  
+                <View>  
                   <View>
                     <TextInput
                     style={styles.TextInput}
-                    placeholder='Enter the department code'
+                    placeholder='Введите код департамента'
                     onChangeText={(text) => this.setState({department_code:text})}
                     onSubmitEditing = {this.signUp}/>
                   </View>
-                </KeyboardAwareScrollView>
+                </View>
                 
                 <View style={{paddingBottom: -5}}>
                   <TouchableOpacity style={styles.TouchableOpacityStyle} onPress={this.signUp}>
-                      <Text style={{color: 'white'}}>Sign In</Text>
+                      <Text style={{color: 'white'}}>Войти</Text>
                   </TouchableOpacity>
                 </View>
 

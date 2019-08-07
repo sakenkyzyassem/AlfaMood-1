@@ -32,7 +32,9 @@ export default class HistoryPage extends Component {
   }
   getData=async()=>{
     var data={};
+    var exit = false;
     for (var i = 0; i < 3; i++) {
+      if(exit){break}
       var dateName='day'+(i+1);
       var array={};
       for (var j = 1; j <= 3; j++) {
@@ -40,13 +42,12 @@ export default class HistoryPage extends Component {
         var cycleName ='cycle'+j;
         try{
         await this.postMethod('getMood',this.state.server,{user_id:this.state.user_id,cycle:j,day:i,timeZone:this.state.timeZone});
-        }catch{this.setState({loading:false});alert("Something went wrong")}
+        }catch{this.setState({loading:false});alert("Что то пошло не так. Данные не загрузились");exit=true;break;}
         try{
           array[cycleName]=this.state.data;
           var d=array[cycleName][0];
           GetImage(d);
         }catch(e){
-
         }
       }
       data[dateName]=array;
@@ -96,7 +97,15 @@ export default class HistoryPage extends Component {
     return (
       <View style={[styles.MainContainer,{backgroundColor:'white'}]}>
         {
-          this.state.loading ? <ActivityIndicator color='#009688' size='large' style={styles.ActivityIndicatorStyle} /> : 
+          this.state.loading ?  
+          <View>
+            <ActivityIndicator color='#009688' size='large' style={styles.ActivityIndicatorStyle} />
+            <Text style={{alignItems:'center',justifyContent:'center',textAlign:'center',color:'#257DD9',fontStyle: 'italic',fontSize:20}}>
+            Идет загрузка данных ...
+            </Text>
+          </View>
+          
+          :
           
           <View style={styles.MainContainer}>
 
@@ -146,8 +155,11 @@ GetImage=(data)=>{
 NoToday=()=>{
   return(
     <View style={styles.TodayView}>
-      <Text>
-        Sorry but you haven't voted today
+      <Text style={{alignItems:'center',justifyContent:'center',textAlign:'center',color:'#257DD9',fontStyle: 'italic',fontSize:20}}>
+      Нет данных
+      </Text>
+      <Text style={{alignItems:'center',justifyContent:'center',textAlign:'center',color:'#257DD9',fontStyle: 'italic',fontSize:20}}>
+      Нажмите на желтый контейнер
       </Text>
     </View>
   );
@@ -184,7 +196,7 @@ TodayView = (props) => {
       />
       <View style={styles.TodayViewTextView}>
         <View style = {styles.TodayDateInfo}>
-          <Text>CYCLE {props.cycle}</Text>
+          <Text>ЦИКЛ {props.cycle}</Text>
           <Text>{props.data.time}</Text>
         </View>
         <View style={{height:60,width:1,backgroundColor:'black'}}/>

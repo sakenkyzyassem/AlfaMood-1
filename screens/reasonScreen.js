@@ -1,8 +1,17 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, TextInput, Text, TouchableOpacity, Image, KeyboardAvoidingView, ActivityIndicator,AsyncStorage} from 'react-native';
 
-export default class ReasonScreen extends Component
-{
+export default class ReasonScreen extends Component{
+    static navigationOptions={
+        headerLeft: (
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Reason')}
+          >
+            <Image source ={require('../assets/icons/back.png')} style={{width:30,height:30}}/>
+          </TouchableOpacity>
+          ),
+    }
+
     constructor()
     {
         super();
@@ -66,12 +75,11 @@ export default class ReasonScreen extends Component
             await AsyncStorage.setItem('cycle',''+this.state.cycle);
             this.setState({loading:false});
             alert(this.state.data.data);
-            this.props.navigation.navigate('History');
         }
         else{
-            alert('No more votes this cycle (But, maybe, in the future we would add some feature so that you could editthe vote)');
-            this.props.navigation.navigate('History');
+            alert('Вы не можете больше голосовать. (Приложение до сих пор в разработке, возможно в будущем вы сможете изменять голос по желанию)');
         }
+        this.props.navigation.navigate('Home');
     }
 
 
@@ -110,7 +118,7 @@ export default class ReasonScreen extends Component
 
                     <View style={styles.container}>
                         <Text style={styles.reasonText}>
-                          Would you like to share the reason?
+                          Хотите ли поделиться своим мнением?
                         </Text>
 
                         <TextInput
@@ -124,7 +132,7 @@ export default class ReasonScreen extends Component
                           borderRadius: 25,      
                         }}
                         onSubmitEditing = {this.addMood}
-                        placeholder="It's optional"
+                        placeholder="Не обязательно"
                         onChangeText={(text) => this.setState({comment:text})}/>
 
                       <View style={{height: '30%'}}/>
@@ -145,7 +153,7 @@ export default class ReasonScreen extends Component
                           shadowRadius: 3.84,
                           elevation: 5,
                           }} onPress={this.addMood}>
-                            <Text style = {styles.responseText}>Send my response</Text>
+                            <Text style = {styles.responseText}>Отправить</Text>
                         </TouchableOpacity>
                     </View>
                     {

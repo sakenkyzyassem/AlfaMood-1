@@ -24,7 +24,11 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier":"mood.apple.app"
+    },
+    "android": {
+      "package": "mood.apple.app"
     }
   }
 }

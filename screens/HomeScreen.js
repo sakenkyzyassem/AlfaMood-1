@@ -24,7 +24,8 @@ export default class HomeScreen extends React.Component {
       curDate: '',
       cycle: '',
       voted: false,
-      loading :true
+      loading :true,
+      until:null
     };
   }
 
@@ -36,16 +37,22 @@ export default class HomeScreen extends React.Component {
     }, 1000);
 
     if(hours >= 0 && hours <= 12)
-      this.setState({cycle: 1})
+      this.setState({cycle: 1,until:'13:00'})
     else if (hours > 12 && hours <= 17)
-      this.setState({cycle: 2})
+      this.setState({cycle: 2,until:'18:00'})
     else 
-      this.setState({cycle: 3})
+      this.setState({cycle: 3,until:'00:00'})
     
     this.setState({
       curDate : new Date().toDateString()
     })
 
+    await this.checkVoted();
+
+    this.setState({loading:false});
+    this.props.navigation.addListener('didFocus',async()=>{await this.checkVoted();this.render();})
+  }
+  checkVoted = async()=>{
     var cellDate = await AsyncStorage.getItem('date');
     var cellCycle= await AsyncStorage.getItem('cycle');
     if(this.state.curDate==cellDate){
@@ -53,39 +60,42 @@ export default class HomeScreen extends React.Component {
             this.setState({voted:true});
         }
     }
-
-    this.setState({loading:false});
   }
 
   render(){
     return (
       <View style={styles.container}>
         <View style={{ flex: 2 }}>
-        <Text style={styles.text}>HOW ARE YOU?</Text>
-        <View style={{ flexDirection: 'row', justifyContent: 'center'}}>
-          <Text style={styles.date}>
-            <Image style={styles.icon} 
-            source={require('../assets/images/other/calendar.png')} />
-            {this.state.curDate}
-          </Text>
-          <View style={{width:'10%'}} />
-          <Text style={{fontSize: 15, color: '#257DD9'}}>
-            <Image style={styles.icon} 
-            source={require('../assets/images/other/time.png')} />
-            CYCLE {this.state.cycle}
-          </Text>
+          <View style={{flex:4}}>
+            <Text style={styles.text}>КАК ВАШИ ДЕЛА?</Text>
+          </View>
+          <View style={{ flexDirection: 'row', justifyContent: 'center',alignItems:'baseline',flex:1}}>
+            <Text style={styles.date}>
+              <Image style={styles.icon} 
+              source={require('../assets/images/other/calendar.png')} />
+              {this.state.curDate}
+            </Text>
+            <View style={{width:'10%'}} />
+            <View style={{flexDirection:'row'}}>
+              <Image style={styles.icon} 
+              source={require('../assets/images/other/time.png')} />
+              <View style={{flexDirection:'column'}}>
+              <Text style={{fontSize: 15, color: '#257DD9'}}>ЦИКЛ {this.state.cycle}</Text>
+              <Text style={{fontSize: 15, color: '#257DD9'}}>ДО: {this.state.until}</Text>
+              </View>
+            </View>
+          </View>
         </View>
-      </View> 
-      
-      <View style={{padding: '6%'}} />
+        
+        <View style={{padding: '6%'}} />
 
-      <View style ={{flex: 4}}>
-        {
-          this.state.voted ? <Preloader />:<Swipeable navigation = {this.props.navigation} />
-        }
+        <View style ={{flex: 4}}>
+          {
+            this.state.voted ? <Preloader />:<Swipeable navigation = {this.props.navigation} />
+          }
+        </View>
       </View>
-    </View>
-     )
+    )
   };
 }
 

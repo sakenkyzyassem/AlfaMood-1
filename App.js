@@ -49,15 +49,6 @@ const VoteScreen = createStackNavigator(
     Home: HomeScreen,
     Reason: {
       screen:ReasonScreen,
-      navigationOptions:{
-        headerRight: (
-          <TouchableOpacity
-            onPress={() => navigation.navigate('Reason')}
-          >
-            <Image source ={require('./assets/icons/back.png')} style={{width:30,height:30}}/>
-          </TouchableOpacity>
-        ),
-      }
     }  
   },
   {
@@ -72,7 +63,7 @@ const VoteScreen = createStackNavigator(
 
 const NavigatorStack = createMaterialTopTabNavigator (
 {
-  Vote: {
+  Голос: {
     screen: VoteScreen,
     navigationOptions:{
       tabBarIcon: ({tintColor}) => (
@@ -80,7 +71,7 @@ const NavigatorStack = createMaterialTopTabNavigator (
         )
     }
   },
-  History: {
+  История: {
     screen: HistoryScreen,
     navigationOptions: {
       tabBarIcon: ({tintColor}) => (
@@ -90,7 +81,7 @@ const NavigatorStack = createMaterialTopTabNavigator (
   }
 },
 {
-  initialRouteName: 'Vote',
+  initialRouteName: 'Голос',
   tabBarPosition: 'bottom',
   tabBarOptions: {
     activeTintColor: 'red',

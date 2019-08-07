@@ -61,7 +61,7 @@ export default class App extends Component {
     return (
       <View style={styles.container}>
         <Text style={styles.info}>
-        You already have voted for the current cycle, please come back on the next cycle
+        Вы уже голосовали за данный цикл. Пожалуйста, приходите к следующему )
         </Text>
         <BouncingPreloader
           icons={this.icon}
