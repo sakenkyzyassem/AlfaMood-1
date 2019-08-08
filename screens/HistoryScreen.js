@@ -16,9 +16,26 @@ export default class HistoryPage extends Component {
       timeZone:null
     };
   };
+  postMethod= async(method,methodUrl,methodBody)=>{
+        await fetch('https://'+methodUrl+'/alfa/'+method+'.php',
+        {
+            method: 'POST',
+            headers: 
+            {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(methodBody)
+
+        }).then((response) => response.json()).then((responseJsonFromServer) =>
+        {
+            this.setState({data:responseJsonFromServer});
+        });
+
+    };
   async componentDidMount(){
     await this.doFirst();//get server info, get info about user , get the data
-    this.setTodayDate(1);
+    this.setTodayDate(0);
     this.setState({loading:false});
 
   };
@@ -31,68 +48,25 @@ export default class HistoryPage extends Component {
     await this.getData();
   }
   getData=async()=>{
-    var data={};
-    var exit = false;
-    for (var i = 0; i < 3; i++) {
-      if(exit){break}
-      var dateName='day'+(i+1);
-      var array={};
-      for (var j = 1; j <= 3; j++) {
-        this.setState({data:null});
-        var cycleName ='cycle'+j;
-        try{
-        await this.postMethod('getMood',this.state.server,{user_id:this.state.user_id,cycle:j,day:i,timeZone:this.state.timeZone});
-        }catch{this.setState({loading:false});alert("Что то пошло не так. Данные не загрузились");exit=true;break;}
-        try{
-          array[cycleName]=this.state.data;
-          var d=array[cycleName][0];
-          GetImage(d);
-        }catch(e){
-        }
-      }
-      data[dateName]=array;
-    }
-    this.setState({data:data});
-  };
+    try{await this.postMethod('getMood',this.state.server,{user_id:this.state.user_id,timeZone:this.state.timeZone});}
+    catch(e){this.setState({loading:false});alert("Что то пошло не так. Данные не загрузились .Проверьте подключение к интернету");}
+  }
   refresh=async()=>{
     this.setState({loading:true});
     await this.getData();
     this.setState({loading:false});
   }
-
-  postMethod= async(method,methodUrl,methodBody)=>{
-  	await fetch('https://'+methodUrl+'/alfa/'+method+'.php',
-  	{
-  	    method: 'POST',
-  	    headers: 
-  	    {
-  	        'Accept': 'application/json',
-  	        'Content-Type': 'application/json',
-  	    },
-  	    body: JSON.stringify(methodBody)
-
-  	}).then((response) => response.json()).then((responseJsonFromServer) =>
-  	{
-  	    this.setState({data:responseJsonFromServer});
-  	});
-  };
+  setTodayDate=(day)=>{
+    console.log(this.state.data);
+    console.log('data');
+    console.log(day);
+    var data=this.state.data.filter(filterByDay(day));
+    console.log(data);
+    this.setState({todayData:data});
+  }
   move(){
     NavigationService.navigate('Home');
   };
-  setTodayDate=(day)=>{
-    var date='day'+day;
-    for (var i = 1; i < 4; ++i) {
-      var cycle='cycle'+i;
-      try{
-        var check=this.state.data[date][cycle][0];
-        if(typeof check!='undefined'){
-          this.setState({todayData:this.state.data[date]});
-          break;
-        }
-      }catch
-      {}
-    }
-  }
   render() {
     return (
       <View style={[styles.MainContainer,{backgroundColor:'white'}]}>
@@ -114,14 +88,25 @@ export default class HistoryPage extends Component {
               style={styles.BackgroundImage}
             />
             {
-              this.state.todayData==null ? <NoToday/>:<BigTodayView data={this.state.todayData}/>
+              this.state.todayData==null ? 
+              <View style={styles.TodayView}>
+                <Text style={{alignItems:'center',justifyContent:'center',textAlign:'center',color:'#257DD9',fontStyle: 'italic',fontSize:20}}>
+                Нет данных
+                </Text>
+                <Text style={{alignItems:'center',justifyContent:'center',textAlign:'center',color:'#257DD9',fontStyle: 'italic',fontSize:20}}>
+                Нажмите на желтый контейнер
+                </Text>
+              </View>
+              :
+              <BigTodayView data={this.state.todayData}/>
             }
 
             <TouchableOpacity style={{height: '10%',justifyContent:'center',alignItems:'center'}} onPress={()=>this.refresh()}>
               <Image source={require('../assets/icons/refresh.png')} style={{width:30,height:30}}/>
             </TouchableOpacity>
-
-            <BigHistoryView data={this.state.data} handlePress={(day)=>this.setTodayDate(day)}/>
+            {
+              this.state.data==null ?<NoData/>:<BigHistoryView data={this.state.data} handlePress={(day)=>this.setTodayDate(day)}/>
+            }
 
           </View>
         }
@@ -129,61 +114,73 @@ export default class HistoryPage extends Component {
     );
   }
 }
+filterByDay=(day)=>{
+  var desiredDay=new Date().getDate()-day;
+  return (element)=>{
+    var dayData=new Date(element.date).getDate();
+    return dayData==desiredDay;
+  }
+}
+filterByCycle=(cycle)=>{
+  return (element)=>{
+    return element.cycle==cycle;
+  }
+}
 GetImage=(data)=>{
+  console.log('getting image');
   var mood=data.mood;
+  console.log(mood);
 	switch (mood) {
 		case "happy":
-			data.image=require('../assets/images/emotions/happy.png');
+			return require('../assets/images/emotions/happy.png');
 			break;
 		case "good":
-			data.image=require('../assets/images/emotions/good.png');
+			return require('../assets/images/emotions/good.png');
 			break;
 		case "meh":
-			data.image=require('../assets/images/emotions/meh.png');
+			return require('../assets/images/emotions/meh.png');
 			break;
 		case "sad":
-			data.image=require('../assets/images/emotions/sad.png');
+			return require('../assets/images/emotions/sad.png');
 			break;
 		case "angry":
-			data.image=require('../assets/images/emotions/angry.png');
+			return require('../assets/images/emotions/angry.png');
 			break;
 		default:
+    return null;
 			break;
   }
 }
 
-NoToday=()=>{
+NoData=()=>{
   return(
     <View style={styles.TodayView}>
       <Text style={{alignItems:'center',justifyContent:'center',textAlign:'center',color:'#257DD9',fontStyle: 'italic',fontSize:20}}>
       Нет данных
-      </Text>
-      <Text style={{alignItems:'center',justifyContent:'center',textAlign:'center',color:'#257DD9',fontStyle: 'italic',fontSize:20}}>
-      Нажмите на желтый контейнер
       </Text>
     </View>
   );
 }
 
 BigTodayView = (props) => {
-  var a = Array();
-  for (var i = 1; i <= 3; ++i) {
-    var cycle='cycle'+i;
-      if(typeof props.data[cycle][0]!='undefined'){
-        a[cycle]=true;
-      }else{a[cycle]=false;}
+  var a=props.data;
+  console.log(a);
+  console.log("Big today data");
+  var data=[];
+  for(var i = 0;i<3;i++){
+    var array=a.filter(filterByCycle(i+1))[0];
+    console.log(array);
+    console.log('big today data here');
+    if (array !== undefined && array.length != 0) {
+      data.push(<TodayView data={array} key={i}/>)
+    }
+    else{
+      data.push(<BlankBig key={i}/>);
+    }
   }
   return (
     <View style={styles.TodayView}>
-      {
-        a['cycle1'] ? <TodayView data={props.data['cycle1'][0]} cycle={1}/>:<BlankBig/>
-      }
-      {
-        a['cycle2'] ? <TodayView data={props.data['cycle2'][0]} cycle={2}/>:<BlankBig/>
-      }
-      {
-        a['cycle3'] ? <TodayView data={props.data['cycle3'][0]} cycle={3}/>:<BlankBig/>
-      }
+      {data}
     </View>
   );
 };
@@ -191,12 +188,12 @@ TodayView = (props) => {
   return (
     <View style={styles.TodayViewContainer}>
       <Image
-        source={props.data.image}
+        source={GetImage(props.data)}
         style={styles.TodayViewImage}
       />
       <View style={styles.TodayViewTextView}>
         <View style = {styles.TodayDateInfo}>
-          <Text>ЦИКЛ {props.cycle}</Text>
+          <Text>ЦИКЛ {props.data.cycle}</Text>
           <Text>{props.data.time}</Text>
         </View>
         <View style={{height:60,width:1,backgroundColor:'black'}}/>
@@ -209,73 +206,50 @@ TodayView = (props) => {
 };
 
 BigHistoryView = (props) => {
-  var dates=Array();
-  for (var day = 1; day < 4; ++day) {
-    var date='day'+day;
-    for (var i = 1; i < 4; ++i) {
-      var cycle='cycle'+i;
-      try{
-        var check=props.data[date][cycle][0];
-        if(typeof check !='undefined'){
-          dates[day]=true;
-          props.data[date].day=check.date;
-        }
-      }catch{}
+  var a=props.data;
+  var data=[];
+  for(var i = 0;i<3;i++){
+    console.log(i);
+    var array=a.filter(filterByDay(i));
+    if (array !== undefined && array.length != 0) {
+      data.push(<HistoryView data={array} handlePress={(day)=>props.handlePress(day)} day={i} key={i}/>)
+    }
+    else{
+      data.push(<BlankNorm key={i}/>);
     }
   }
   return (
     <View style={styles.HistoryView}>
-      {
-        dates[1] ? <HistoryView data={props.data['day1']} handlePress={()=>props.handlePress(1)}/>:<BlankNorm/>
-      }
-      {
-        dates[2] ? <HistoryView data={props.data['day2']} handlePress={()=>props.handlePress(2)}/>:<BlankNorm/>
-      }
-      {
-        dates[3] ? <HistoryView data={props.data['day3']} handlePress={()=>props.handlePress(3)}/>:<BlankNorm/>
-      }
+      {data}
     </View>
   );
 };
 HistoryView = (props) => {
-  var a = Array();
-  for (var i = 1; i <= 3; ++i) {
-    var cycle='cycle'+i;
-    if(typeof props.data[cycle][0]!='undefined'){
-      GetImage(props.data[cycle][0]);
-      a[cycle]=true;
-    }else{a[cycle]=false;}
+  var a=props.data;
+  var data=[];
+  for(var i = 0;i<3;i++){
+    console.log(i);
+    var element=a.filter(filterByCycle(i+1))[0];
+    if (element !== undefined && element.length != 0) {
+      data.push(<Image source={GetImage(element)} style={styles.HistoryViewImage} key={i}/>)
+    }
+    else{
+      data.push(<BlankSmall key={i}/>);
+    }
   }
   return (
     <View style={styles.HistoryViewContainer}>
       <View style={styles.HistoryViewText}>
         <Image source={require('../assets/images/other/calendar.png')} style={styles.HistoryViewCalendar}/>
-        <Text>{props.data.day}</Text>
+        <Text>{a[0].date}</Text>
       </View>
-      <TouchableOpacity style={styles.HistoryViewImageContainer} onPress={props.handlePress}>
-        {
-          a['cycle1'] ? <Image source={props.data.cycle1[0].image} style={styles.HistoryViewImage}/>:<BlankSmall/>
-        }
-
-        {
-          a['cycle2'] ? <Image source={props.data.cycle2[0].image} style={styles.HistoryViewImage}/>:<BlankSmall/>
-        }
-        {
-          a['cycle3'] ? <Image source={props.data.cycle3[0].image} style={styles.HistoryViewImage}/>:<BlankSmall/>
-        }
+      <TouchableOpacity style={styles.HistoryViewImageContainer} onPress={()=>props.handlePress(props.day)}>
+        {data}
       </TouchableOpacity>
     </View>
   );
 };
 
-PopUp=(data)=>{
-  return(
-    <View style={styles.PopupContainer}>
-      <View>
-      </View>
-    </View>
-  );
-}
 BlankBig=()=>{
   return(
     <View style={styles.BlankBig}/>

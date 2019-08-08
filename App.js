@@ -29,8 +29,8 @@ class AuthLoadingScreen extends React.Component {
         else{
           timeZone='-'+timeZone+':00';
         }
-        console.log(timeZone);
         await AsyncStorage.setItem('timeZone',timeZone);
+        console.log(timeZone);
 
         this.props.navigation.navigate( user_id ? "App":'Auth');
     }
