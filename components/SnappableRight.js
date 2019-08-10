@@ -28,16 +28,7 @@ export default class SnappableRight extends Component {
         backgroundRoute: require('../assets/images/background/happy-background.png'),
         textFieldColor: '#2CB74C',
         title:title,
-        info:this.props.info
-      });
-    }
-    else if (title == 'good'){
-      this.props.navigation.navigate('Reason', {
-        mood: require('../assets/images/emotions/good.png'),
-        buttonColor: '#72BFE0',
-        backgroundRoute: require('../assets/images/background/good-background.png'),
-        textFieldColor: '#86A8CB',
-        title:title,
+        backgroundColor: '#177A1B',
         info:this.props.info
       });
     }
@@ -48,16 +39,7 @@ export default class SnappableRight extends Component {
         backgroundRoute: require('../assets/images/background/meh-background.png'),
         textFieldColor: '#94978D',
         title:title,
-        info:this.props.info
-      });
-    }
-    else if (title == 'sad'){
-      this.props.navigation.navigate('Reason', {
-        mood: require('../assets/images/emotions/sad.png'),
-        buttonColor: '#F7AB3B',
-        backgroundRoute: require('../assets/images/background/sad-background.png'),
-        textFieldColor: '#D6983B',
-        title:title,
+        backgroundColor: '#666861',
         info:this.props.info
       });
     }
@@ -68,6 +50,7 @@ export default class SnappableRight extends Component {
         backgroundRoute: require('../assets/images/background/angry-background.png'),
         textFieldColor: '#C65D5D',
         title:title,
+        backgroundColor: '#AF2020',
         info:this.props.info
       });
     }

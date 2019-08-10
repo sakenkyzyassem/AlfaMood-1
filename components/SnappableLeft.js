@@ -21,18 +21,7 @@ export default class SnappableLeft extends Component {
     );
   }
   handleSubmit = (title) => {
-    if( title == 'happy'){
-      this.props.navigation.navigate('Reason', {
-        mood: require('../assets/images/emotions/happy.png'),
-        buttonColor: '#2DF972',
-        backgroundRoute: require('../assets/images/background/happy-background.png'),
-        textFieldColor: '#2CB74C',
-        title:title,
-        info:this.props.info,
-        navigation: this.props.navigation
-      });
-    }
-    else if (title == 'good'){
+    if (title == 'good'){
       this.props.navigation.navigate('Reason', {
         mood: require('../assets/images/emotions/good.png'),
         buttonColor: '#72BFE0',
@@ -40,21 +29,11 @@ export default class SnappableLeft extends Component {
         textFieldColor: '#86A8CB',
         title:title,
         info:this.props.info,
+        backgroundColor: '#1775D7',
         navigation: this.props.navigation
       });
     }
-    else if (title == 'meh'){
-      this.props.navigation.navigate('Reason', {
-        mood: require('../assets/images/emotions/meh.png'),
-        buttonColor: '#B8BBAE',
-        backgroundRoute: require('../assets/images/background/meh-background.png'),
-        textFieldColor: '#94978D',
-        title:title,
-        info:this.props.info,
-        navigation: this.props.navigation
-      });
-    }
-    else if (title == 'sad'){
+    else{
       this.props.navigation.navigate('Reason', {
         mood: require('../assets/images/emotions/sad.png'),
         buttonColor: '#F7AB3B',
@@ -62,21 +41,12 @@ export default class SnappableLeft extends Component {
         textFieldColor: '#D6983B',
         title:title,
         info:this.props.info,
+        backgroundColor: '#B87714',
         navigation: this.props.navigation
       });
     }
-    else {
-      this.props.navigation.navigate('Reason', {
-        mood: require('../assets/images/emotions/angry.png'),
-        buttonColor: '#EE8D8D',
-        backgroundRoute: require('../assets/images/background/angry-background.png'),
-        textFieldColor: '#C65D5D',
-        title:title,
-        info:this.props.info,
-        navigation: this.props.navigation
-      });
     }
-  };
+    
   _onHandlerStateChange = event => {
     if (event.nativeEvent.oldState === State.ACTIVE) {
       Animated.spring(this._dragX, {
@@ -104,4 +74,5 @@ export default class SnappableLeft extends Component {
       </PanGestureHandler>
     );
   }
+
 }

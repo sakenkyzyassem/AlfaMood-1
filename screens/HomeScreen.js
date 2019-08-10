@@ -5,8 +5,7 @@ import {
   View, 
   Image, 
   Text,
-  AsyncStorage,
-  ActivityIndicator
+  AsyncStorage
 } from 'react-native';
 
 import Swipeable from '../components/Swipe';
@@ -32,26 +31,29 @@ export default class HomeScreen extends React.Component {
   async componentDidMount() {
     var hours = new Date().getHours();  
     setInterval( () => {
-      var hours = new Date().getHours();
-
+      hours = new Date().getHours();
+      if(hours >= 9 && hours <= 11)
+        this.setState({cycle: 1, until:'12:00'})
+      else if (hours >= 12 && hours <= 14)
+        this.setState({cycle: 2,until:'15:00'})
+      else if (hours >= 15 && hours <= 17)
+        this.setState({cycle: 3,until:'18:00'})
+      else
+        this.setState({voted:true, until: '9:00', cycle: 4})
+      
+      this.setState({
+        curDate : new Date().toDateString()
+      })
     }, 1000);
 
-    if(hours >= 0 && hours <= 12)
-      this.setState({cycle: 1,until:'13:00'})
-    else if (hours > 12 && hours <= 17)
-      this.setState({cycle: 2,until:'18:00'})
-    else 
-      this.setState({cycle: 3,until:'00:00'})
     
-    this.setState({
-      curDate : new Date().toDateString()
-    })
 
     await this.checkVoted();
 
     this.setState({loading:false});
     this.props.navigation.addListener('didFocus',async()=>{await this.checkVoted();this.render();})
   }
+
   checkVoted = async()=>{
     var cellDate = await AsyncStorage.getItem('date');
     var cellCycle= await AsyncStorage.getItem('cycle');
@@ -91,7 +93,7 @@ export default class HomeScreen extends React.Component {
 
         <View style ={{flex: 4}}>
           {
-            this.state.voted ? <Preloader />:<Swipeable navigation = {this.props.navigation} />
+            this.state.voted ? <Preloader />: <Swipeable navigation = {this.props.navigation} />
           }
         </View>
       </View>

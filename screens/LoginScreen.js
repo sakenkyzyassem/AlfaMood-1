@@ -1,8 +1,7 @@
 
 import React, { Component } from 'react';
 import { StyleSheet, View, TextInput, Text, ActivityIndicator, TouchableOpacity,Image,AsyncStorage,Dimensions } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import NavigationService from '../navigation/NavigationService';
+
 
 let width = Dimensions.get('window').width;
 export default class LogInPage extends Component
@@ -24,7 +23,6 @@ export default class LogInPage extends Component
         var server= await AsyncStorage.getItem('server');
         var timeZone=await AsyncStorage.getItem('timeZone');
         this.setState({server:server,timeZone:timeZone});
-        console.log(server);
     }
     postMethod= async(method,methodUrl,methodBody)=>{
         await fetch('https://'+methodUrl+'/alfa/'+method+'.php',

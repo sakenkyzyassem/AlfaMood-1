@@ -57,11 +57,7 @@ export default class HistoryPage extends Component {
     this.setState({loading:false});
   }
   setTodayDate=(day)=>{
-    console.log(this.state.data);
-    console.log('data');
-    console.log(day);
     var data=this.state.data.filter(filterByDay(day));
-    console.log(data);
     this.setState({todayData:data});
   }
   move(){
@@ -100,7 +96,7 @@ export default class HistoryPage extends Component {
               :
               <BigTodayView data={this.state.todayData}/>
             }
-
+            <View style={{height: '3%'}} />
             <TouchableOpacity style={{height: '10%',justifyContent:'center',alignItems:'center'}} onPress={()=>this.refresh()}>
               <Image source={require('../assets/icons/refresh.png')} style={{width:30,height:30}}/>
             </TouchableOpacity>
@@ -127,9 +123,7 @@ filterByCycle=(cycle)=>{
   }
 }
 GetImage=(data)=>{
-  console.log('getting image');
   var mood=data.mood;
-  console.log(mood);
 	switch (mood) {
 		case "happy":
 			return require('../assets/images/emotions/happy.png');
@@ -164,13 +158,9 @@ NoData=()=>{
 
 BigTodayView = (props) => {
   var a=props.data;
-  console.log(a);
-  console.log("Big today data");
   var data=[];
   for(var i = 0;i<3;i++){
     var array=a.filter(filterByCycle(i+1))[0];
-    console.log(array);
-    console.log('big today data here');
     if (array !== undefined && array.length != 0) {
       data.push(<TodayView data={array} key={i}/>)
     }
@@ -209,7 +199,6 @@ BigHistoryView = (props) => {
   var a=props.data;
   var data=[];
   for(var i = 0;i<3;i++){
-    console.log(i);
     var array=a.filter(filterByDay(i));
     if (array !== undefined && array.length != 0) {
       data.push(<HistoryView data={array} handlePress={(day)=>props.handlePress(day)} day={i} key={i}/>)
@@ -228,7 +217,6 @@ HistoryView = (props) => {
   var a=props.data;
   var data=[];
   for(var i = 0;i<3;i++){
-    console.log(i);
     var element=a.filter(filterByCycle(i+1))[0];
     if (element !== undefined && element.length != 0) {
       data.push(<Image source={GetImage(element)} style={styles.HistoryViewImage} key={i}/>)
@@ -266,7 +254,7 @@ BlankSmall=()=>{return(
   );
 }
 const styles = StyleSheet.create({
-  BlankBig:{height:'15%'},
+  BlankBig:{height:'15%', marginRight: 4},
   BlankNorm:{width: '30%',height: '100%',},
   BlankSmall:{height:30},
   MainContainer: {

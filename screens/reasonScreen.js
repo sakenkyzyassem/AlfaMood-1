@@ -1,15 +1,16 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, TextInput, Text, TouchableOpacity, Image, KeyboardAvoidingView, ActivityIndicator,AsyncStorage} from 'react-native';
+import { StyleSheet, View, TextInput, Text, TouchableOpacity, Image, ActivityIndicator,AsyncStorage} from 'react-native';
+import KeyboardShift from '../components/keyboardShift';
 
 export default class ReasonScreen extends Component{
     static navigationOptions={
-        headerLeft: (
-          <TouchableOpacity
-            onPress={() => navigation.navigate('Reason')}
-          >
-            <Image source ={require('../assets/icons/back.png')} style={{width:30,height:30}}/>
-          </TouchableOpacity>
-          ),
+        // headerLeft: (
+        //   <TouchableOpacity
+        //     onPress={() => navigation.navigate('Reason')}
+        //   >
+        //     <Image source ={require('../assets/icons/back.png')} style={{width:30,height:30}}/>
+        //   </TouchableOpacity>
+        //   ),
     }
 
     constructor()
@@ -58,7 +59,7 @@ export default class ReasonScreen extends Component{
         }catch(e){console.log(e)};
     }
     addMood = async() =>
-    {
+    { 
         await this.vote();
         if(this.state.canVote){
             const { navigation } = this.props;
@@ -104,13 +105,16 @@ export default class ReasonScreen extends Component{
     render()
     {
         const { navigation } = this.props;
-            const emotionRoute = navigation.getParam('mood', require('../assets/images/emotions/happy.png'));
-            const buttonColor = navigation.getParam('buttonColor', '#fefefe');
-            const backgroundRoute = navigation.getParam('backgroundRoute', 
-                require('../assets/images/background/happy-background.png'));
-            const textFieldColor = navigation.getParam('textFieldColor', '#fefefe');
+        const emotionRoute = navigation.getParam('mood', require('../assets/images/emotions/happy.png'));
+        const buttonColor = navigation.getParam('buttonColor', '#fefefe');
+        const backgroundRoute = navigation.getParam('backgroundRoute', 
+            require('../assets/images/background/happy-background.png'));
+        const textFieldColor = navigation.getParam('textFieldColor', '#fefefe');
+        const backColor = navigation.getParam('backgroundColor', 'white');
             return(
-                <View style = { styles.mainContainer }>
+                <KeyboardShift>
+          {() => (
+                <View style = {{backgroundColor: backColor, flex: 1, alignItems: 'center'}}>
                     <Image source={backgroundRoute} style={styles.backgroundImage} resizeMode='stretch'/>
                     <View style={{flex: 1}}>
                         <Image source={emotionRoute} style={styles.moodImage} resizeMode='contain'/>
@@ -131,7 +135,7 @@ export default class ReasonScreen extends Component{
                           alignItems:'center',
                           borderRadius: 25,      
                         }}
-                        onSubmitEditing = {this.addMood}
+                        returnKeyType = {"done"}
                         placeholder="Не обязательно"
                         onChangeText={(text) => this.setState({comment:text})}/>
 
@@ -160,17 +164,14 @@ export default class ReasonScreen extends Component{
                     this.state.loading ? <ActivityIndicator color='#009688' size='large'style={styles.ActivityIndicatorStyle} /> : null          
                     }
                 </View>
+             )}
+             </KeyboardShift>
         );
     }    
 }
  
     const styles = StyleSheet.create(
     {
-        mainContainer:
-        {
-            flex: 1,
-            alignItems: 'center'
-        },
         container:
         {
             flex: 1,

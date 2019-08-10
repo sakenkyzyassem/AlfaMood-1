@@ -1,13 +1,15 @@
-import React, { Component } from 'react';
-import {AsyncStorage, SafeAreaView, StyleSheet, View, ActivityIndicator,Image,TouchableOpacity } from 'react-native';
-
+import React from 'react';
+import {AsyncStorage, SafeAreaView, StyleSheet, View, ActivityIndicator, AppRegistry} from 'react-native';
 import HomeScreen from './screens/HomeScreen.js';
 import HistoryScreen from './screens/HistoryScreen.js';
 import ReasonScreen from './screens/reasonScreen.js';
 import LoginScreen from './screens/LoginScreen.js';
 import { createAppContainer, createSwitchNavigator, createStackNavigator, createMaterialTopTabNavigator} from 'react-navigation';
 import Icon from 'react-native-vector-icons/Ionicons';
-import NavigationService from './components/NavigationService';
+import NavigationService from './navigation/NavigationService';
+
+import { name as appName } from "./app.json";  
+AppRegistry.registerComponent(appName, () => App);
 
 class AuthLoadingScreen extends React.Component {
 
@@ -20,7 +22,6 @@ class AuthLoadingScreen extends React.Component {
   }
   _bootstrapAsync = async()=>{
         var user_id = await AsyncStorage.getItem('user_id');  
-        console.log(user_id);
         var date=new Date();
         var timeZone=(-date.getTimezoneOffset()/60);
         if(timeZone>0){
@@ -55,8 +56,7 @@ const VoteScreen = createStackNavigator(
     initialRouteName: 'Home',
     headerMode: 'none',
     defaultNavigationOptions:{
-      headerVisible: false,
-      header: null
+      headerTransparent: true
     }
   }
 );
@@ -150,11 +150,13 @@ export default class App extends React.Component {
 
   async componentDidMount(){
 
-    var server='alfamooddatabase.000webhostapp.com';
+    var server='alfamooddatabase.com';
     await AsyncStorage.setItem('server', server);
     var s = await AsyncStorage.getItem('server');
     console.log(s);
   }
+
+
   render() {
     return (
       <SafeAreaView style={{flex: 1, backgroundColor: '#f2f2f2'}}>
@@ -166,5 +168,3 @@ export default class App extends React.Component {
     );
   }
 }
-
-
