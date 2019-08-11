@@ -150,7 +150,7 @@ export default class App extends React.Component {
 
   async componentDidMount(){
 
-    var server='alfamooddatabase.com';
+    var server='alfamooddatabase.000webhostapp.com';
     await AsyncStorage.setItem('server', server);
     var s = await AsyncStorage.getItem('server');
     console.log(s);

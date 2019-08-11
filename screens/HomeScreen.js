@@ -32,7 +32,7 @@ export default class HomeScreen extends React.Component {
     var hours = new Date().getHours();  
     setInterval( () => {
       hours = new Date().getHours();
-      if(hours >= 9 && hours <= 11)
+      if(hours >= 6 && hours <= 11)
         this.setState({cycle: 1, until:'12:00'})
       else if (hours >= 12 && hours <= 14)
         this.setState({cycle: 2,until:'15:00'})

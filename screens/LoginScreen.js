@@ -87,6 +87,7 @@ export default class LogInPage extends Component
                 <View>  
                   <View>
                     <TextInput
+                    secureTextEntry={true}
                     style={styles.TextInput}
                     placeholder='Введите код департамента'
                     onChangeText={(text) => this.setState({department_code:text})}

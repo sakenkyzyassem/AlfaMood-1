@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, TextInput, Text, TouchableOpacity, Image, ActivityIndicator,AsyncStorage} from 'react-native';
 import KeyboardShift from '../components/keyboardShift';
+import ThreeAxisSensor from 'expo-sensors/build/ThreeAxisSensor';
 
 export default class ReasonScreen extends Component{
     static navigationOptions={
@@ -27,7 +28,8 @@ export default class ReasonScreen extends Component{
             user_id:null,
             department_id:null,
             server:null,
-            timeZone:null
+            timeZone:null,
+            voted:false,
         };
     }
     vote=async () =>{
@@ -65,17 +67,22 @@ export default class ReasonScreen extends Component{
             const { navigation } = this.props;
             var mood=navigation.getParam('title');
             this.setState({loading:true});
-            await this.postMethod('addMood',this.state.server,{
-                timeZone:this.state.timeZone,
-                comment:this.state.comment,
-                rate:mood,
-                cycle:this.state.cycle,
-                user_id:this.state.user_id,
-                department_id:this.state.department_id}); 
-            await AsyncStorage.setItem('date',this.state.date);
-            await AsyncStorage.setItem('cycle',''+this.state.cycle);
-            this.setState({loading:false});
+            try{
+                await this.postMethod('addMood',this.state.server,{
+                    timeZone:this.state.timeZone,
+                    comment:this.state.comment,
+                    rate:mood,
+                    cycle:this.state.cycle,
+                    user_id:this.state.user_id,
+                    department_id:this.state.department_id}); 
+                this.setState({voted:true});
+            }catch{this.setState({voted:false});}
+            if(this.state.voted){
+                await AsyncStorage.setItem('date',this.state.date);
+                await AsyncStorage.setItem('cycle',''+this.state.cycle);
+            }
             alert(this.state.data.data);
+            this.setState({loading:false});
         }
         else{
             alert('Вы не можете больше голосовать. (Приложение до сих пор в разработке, возможно в будущем вы сможете изменять голос по желанию)');
