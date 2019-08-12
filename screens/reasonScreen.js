@@ -1,17 +1,21 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, TextInput, Text, TouchableOpacity, Image, ActivityIndicator,AsyncStorage} from 'react-native';
+import { 
+    StyleSheet, 
+    View, 
+    TextInput, 
+    Text, 
+    TouchableOpacity, 
+    Image, 
+    ActivityIndicator,
+    AsyncStorage
+} from 'react-native';
+
 import KeyboardShift from '../components/keyboardShift';
-import ThreeAxisSensor from 'expo-sensors/build/ThreeAxisSensor';
 
 export default class ReasonScreen extends Component{
     static navigationOptions={
-        // headerLeft: (
-        //   <TouchableOpacity
-        //     onPress={() => navigation.navigate('Reason')}
-        //   >
-        //     <Image source ={require('../assets/icons/back.png')} style={{width:30,height:30}}/>
-        //   </TouchableOpacity>
-        //   ),
+        headerTransparent: true,
+        
     }
 
     constructor()
@@ -32,6 +36,7 @@ export default class ReasonScreen extends Component{
             voted:false,
         };
     }
+
     vote=async () =>{
         try{
             var cellDate = await AsyncStorage.getItem('date');
@@ -46,6 +51,7 @@ export default class ReasonScreen extends Component{
             console.log(e);
         }
     }
+
     async componentDidMount(){ 
         const {navigation} = this.props;
         var server=await AsyncStorage.getItem('server');
@@ -60,6 +66,7 @@ export default class ReasonScreen extends Component{
             this.setState({user_id:user,department_id:department});
         }catch(e){console.log(e)};
     }
+
     addMood = async() =>
     { 
         await this.vote();
@@ -76,7 +83,11 @@ export default class ReasonScreen extends Component{
                     user_id:this.state.user_id,
                     department_id:this.state.department_id}); 
                 this.setState({voted:true});
-            }catch{this.setState({voted:false});}
+            }
+            catch
+            {   
+                this.setState({voted:false});
+            }
             if(this.state.voted){
                 await AsyncStorage.setItem('date',this.state.date);
                 await AsyncStorage.setItem('cycle',''+this.state.cycle);
@@ -84,15 +95,14 @@ export default class ReasonScreen extends Component{
             alert(this.state.data.data);
             this.setState({loading:false});
         }
-        else{
+        else
+        {
             alert('Вы не можете больше голосовать. (Приложение до сих пор в разработке, возможно в будущем вы сможете изменять голос по желанию)');
         }
         this.props.navigation.navigate('Home');
     }
 
-
-
-    postMethod= async(method,methodUrl,methodBody)=>{
+    postMethod = async(method,methodUrl,methodBody) => {
         await fetch('https://'+methodUrl+'/alfa/'+method+'.php',
         {
             method: 'POST',
@@ -108,7 +118,8 @@ export default class ReasonScreen extends Component{
             this.setState({data:responseJsonFromServer});
         });
 
-    };
+    }
+
     render()
     {
         const { navigation } = this.props;
@@ -120,59 +131,74 @@ export default class ReasonScreen extends Component{
         const backColor = navigation.getParam('backgroundColor', 'white');
             return(
                 <KeyboardShift>
-          {() => (
-                <View style = {{backgroundColor: backColor, flex: 1, alignItems: 'center'}}>
-                    <Image source={backgroundRoute} style={styles.backgroundImage} resizeMode='stretch'/>
-                    <View style={{flex: 1}}>
-                        <Image source={emotionRoute} style={styles.moodImage} resizeMode='contain'/>
+                    {() => (
+                    <View style = {{backgroundColor: backColor, flex: 1, alignItems: 'center'}}>
+                        <Image 
+                            source={backgroundRoute} 
+                            style={styles.backgroundImage} 
+                            resizeMode='stretch'
+                        />
+                        <View style={{flex: 1}}>
+                            <Image 
+                                source={emotionRoute} 
+                                style={styles.moodImage} 
+                                resizeMode='contain'
+                            />
+                        </View>
+
+                        <View style={styles.container}>
+                            <Text style={styles.reasonText}>
+                            Хотите ли поделиться своим мнением?
+                            </Text>
+
+                            <TextInput
+                                style={{
+                                    backgroundColor: textFieldColor,
+                                    margin: 10,
+                                    padding: 10,
+                                    paddingLeft: 15,
+                                    width:'100%',
+                                    alignItems:'center',
+                                    borderRadius: 25,      
+                                }}
+                                returnKeyType = {"done"}
+                                placeholder="Не обязательно"
+                                onChangeText={(text) => this.setState({comment:text})}
+                            />
+
+                            <View style={{height: '30%'}}/>
+
+                            <TouchableOpacity 
+                                style={{
+                                    paddingTop: 10,
+                                    paddingBottom: 10,
+                                    backgroundColor: buttonColor,
+                                    width:'100%',
+                                    alignItems:'center',
+                                    borderRadius: 25,
+                                    shadowColor: "#ffffff",
+                                    shadowOffset: {
+                                        width: 0,
+                                        height: 2,
+                                    },
+                                    shadowOpacity: 0.30,
+                                    shadowRadius: 3.84,
+                                    elevation: 5,
+                                }} 
+                                onPress={this.addMood}>
+                                <Text style = {styles.responseText}>Отправить</Text>
+                            </TouchableOpacity>
+                        </View>
+                        {
+                        this.state.loading ? 
+                            <ActivityIndicator 
+                                color='#009688' 
+                                size='large'
+                                style={styles.ActivityIndicatorStyle} /> : null          
+                        }
                     </View>
-
-                    <View style={styles.container}>
-                        <Text style={styles.reasonText}>
-                          Хотите ли поделиться своим мнением?
-                        </Text>
-
-                        <TextInput
-                        style={{
-                          backgroundColor: textFieldColor,
-                          margin: 10,
-                          padding: 10,
-                          paddingLeft: 15,
-                          width:'100%',
-                          alignItems:'center',
-                          borderRadius: 25,      
-                        }}
-                        returnKeyType = {"done"}
-                        placeholder="Не обязательно"
-                        onChangeText={(text) => this.setState({comment:text})}/>
-
-                      <View style={{height: '30%'}}/>
-
-                        <TouchableOpacity style={{
-                          paddingTop: 10,
-                          paddingBottom: 10,
-                          backgroundColor: buttonColor,
-                          width:'100%',
-                          alignItems:'center',
-                          borderRadius: 25,
-                          shadowColor: "#ffffff",
-                          shadowOffset: {
-                            width: 0,
-                            height: 2,
-                          },
-                          shadowOpacity: 0.30,
-                          shadowRadius: 3.84,
-                          elevation: 5,
-                          }} onPress={this.addMood}>
-                            <Text style = {styles.responseText}>Отправить</Text>
-                        </TouchableOpacity>
-                    </View>
-                    {
-                    this.state.loading ? <ActivityIndicator color='#009688' size='large'style={styles.ActivityIndicatorStyle} /> : null          
-                    }
-                </View>
-             )}
-             </KeyboardShift>
+                    )}
+                </KeyboardShift>
         );
     }    
 }

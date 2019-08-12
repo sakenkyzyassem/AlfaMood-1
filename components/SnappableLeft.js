@@ -15,11 +15,13 @@ export default class SnappableLeft extends Component {
       inputRange: [-100, -50, 0, 50, 100],
       outputRange: [-30, -10, 0, 10, 30],
     });
+
     this._onGestureEvent = Animated.event(
       [{ nativeEvent: { translationX: this._dragX } }],
       { useNativeDriver: USE_NATIVE_DRIVER }
     );
   }
+
   handleSubmit = (title) => {
     if (title == 'good'){
       this.props.navigation.navigate('Reason', {
@@ -31,7 +33,7 @@ export default class SnappableLeft extends Component {
         info:this.props.info,
         backgroundColor: '#1775D7',
         navigation: this.props.navigation
-      });
+      })
     }
     else{
       this.props.navigation.navigate('Reason', {
@@ -43,9 +45,9 @@ export default class SnappableLeft extends Component {
         info:this.props.info,
         backgroundColor: '#B87714',
         navigation: this.props.navigation
-      });
+      })
     }
-    }
+  }
     
   _onHandlerStateChange = event => {
     if (event.nativeEvent.oldState === State.ACTIVE) {
@@ -56,9 +58,11 @@ export default class SnappableLeft extends Component {
         toValue: 0,
         useNativeDriver: USE_NATIVE_DRIVER,
       }).start();
+
       this.handleSubmit(this.props.title);
     }
-  };
+  }
+
   render() {
     const { children } = this.props;
     return (
@@ -68,11 +72,13 @@ export default class SnappableLeft extends Component {
         minOffsetX={-10}
         onGestureEvent={this._onGestureEvent}
         onHandlerStateChange={this._onHandlerStateChange}>
+        
         <Animated.View style={{ transform: [{ translateX: this._transX }] }}>
           {children}
         </Animated.View>
+
       </PanGestureHandler>
-    );
+    )
   }
 
 }

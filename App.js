@@ -1,14 +1,27 @@
 import React from 'react';
-import {AsyncStorage, SafeAreaView, StyleSheet, View, ActivityIndicator, AppRegistry} from 'react-native';
+import {
+  AsyncStorage, 
+  SafeAreaView, 
+  StyleSheet, 
+  View, 
+  ActivityIndicator, 
+  AppRegistry
+} from 'react-native';
 import HomeScreen from './screens/HomeScreen.js';
 import HistoryScreen from './screens/HistoryScreen.js';
 import ReasonScreen from './screens/reasonScreen.js';
 import LoginScreen from './screens/LoginScreen.js';
-import { createAppContainer, createSwitchNavigator, createStackNavigator, createMaterialTopTabNavigator} from 'react-navigation';
+import { 
+  createAppContainer, 
+  createSwitchNavigator, 
+  createStackNavigator, 
+  createMaterialTopTabNavigator
+} from 'react-navigation';
 import Icon from 'react-native-vector-icons/Ionicons';
 import NavigationService from './navigation/NavigationService';
 
 import { name as appName } from "./app.json";  
+
 AppRegistry.registerComponent(appName, () => App);
 
 class AuthLoadingScreen extends React.Component {
@@ -20,21 +33,23 @@ class AuthLoadingScreen extends React.Component {
     },
     this._bootstrapAsync();
   }
-  _bootstrapAsync = async()=>{
-        var user_id = await AsyncStorage.getItem('user_id');  
-        var date=new Date();
-        var timeZone=(-date.getTimezoneOffset()/60);
-        if(timeZone>0){
-          timeZone='+'+timeZone+":00"; 
-        }
-        else{
-          timeZone='-'+timeZone+':00';
-        }
-        await AsyncStorage.setItem('timeZone',timeZone);
-        console.log(timeZone);
 
-        this.props.navigation.navigate( user_id ? "App":'Auth');
-    }
+  _bootstrapAsync = async()=>{
+      var user_id = await AsyncStorage.getItem('user_id');  
+      var date=new Date();
+      var timeZone=(-date.getTimezoneOffset()/60);
+
+      if(timeZone>0){
+        timeZone='+'+timeZone+":00"; 
+      }
+      else{
+        timeZone='-'+timeZone+':00';
+      }
+      await AsyncStorage.setItem('timeZone',timeZone);
+      console.log(timeZone);
+
+      this.props.navigation.navigate( user_id ? "App":'Auth');
+  }
 
   render() {
     return (
@@ -52,14 +67,14 @@ const VoteScreen = createStackNavigator(
       screen:ReasonScreen,
     }  
   },
+
   {
     initialRouteName: 'Home',
-    headerMode: 'none',
     defaultNavigationOptions:{
       headerTransparent: true
     }
   }
-);
+)
 
 const NavigatorStack = createMaterialTopTabNavigator (
 {
@@ -71,6 +86,7 @@ const NavigatorStack = createMaterialTopTabNavigator (
         )
     }
   },
+
   История: {
     screen: HistoryScreen,
     navigationOptions: {
@@ -80,6 +96,7 @@ const NavigatorStack = createMaterialTopTabNavigator (
     }
   }
 },
+
 {
   initialRouteName: 'Голос',
   tabBarPosition: 'bottom',
@@ -107,12 +124,14 @@ const AuthStack = createStackNavigator({
   header: null,
   headerMode: 'none'
 });
+
 const HomeStack = createStackNavigator({ 
   NavigatorStack 
 },
 {
-  header: null,
-  headerMode: 'none'
+  defaultNavigationOptions:{
+  headerTransparent: true
+  }
 });
 
 const AppContainer = createAppContainer(createSwitchNavigator(
@@ -130,12 +149,12 @@ const AppContainer = createAppContainer(createSwitchNavigator(
 
 const styles = StyleSheet.create(
 {
-  MainContainer:
-  {
+  MainContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'space-around'
   },
+
   ActivityIndicatorStyle:{
     position: 'absolute',
     left: 0,
@@ -146,16 +165,15 @@ const styles = StyleSheet.create(
     justifyContent: 'center'
   }
 })
+
 export default class App extends React.Component {
 
   async componentDidMount(){
-
     var server='alfamooddatabase.000webhostapp.com';
     await AsyncStorage.setItem('server', server);
     var s = await AsyncStorage.getItem('server');
     console.log(s);
   }
-
 
   render() {
     return (
@@ -165,6 +183,6 @@ export default class App extends React.Component {
             NavigationService.setTopLevelNavigator(navigatorRef);
         }}/>
       </SafeAreaView>
-    );
+    )
   }
 }

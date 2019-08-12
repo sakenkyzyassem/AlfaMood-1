@@ -1,10 +1,11 @@
 import React, { Component } from "react";
 import {
-  Text,
-  View,
-  StyleSheet,
-  Dimensions
+    Text,
+    View,
+    StyleSheet,
+    Dimensions
 } from "react-native";
+
 import BouncingPreloader from "react-native-bouncing-preloader";
 
 let heightD = Dimensions.get('window').height;
@@ -61,7 +62,7 @@ export default class App extends Component {
     return (
       <View style={styles.container}>
         <Text style={styles.info}>
-        Вы уже голосовали. Пожалуйста, приходите к следующему циклу)
+          Вы уже голосовали. Пожалуйста, приходите к следующему циклу)
         </Text>
         <BouncingPreloader
           icons={this.icon}

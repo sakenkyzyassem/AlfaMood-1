@@ -1,5 +1,9 @@
 import React, {Component} from 'react';
-import {View, StyleSheet, Image} from 'react-native';
+import {
+  View, 
+  StyleSheet, 
+  Image
+} from 'react-native';
 
 import PanGestureRight from './SnappableRight.js';
 import PanGestureLeft from './SnappableLeft.js';
@@ -40,7 +44,9 @@ export default class Swipeable extends Component {
             title = 'happy' 
             navigation = {this.props.navigation} 
             info={[this.state.curDate, this.state.cycle]} >
-            <Image source={require('../assets/images/pangesture/happy.png')} style={styles.boxLeft} />
+            <Image 
+              source={require('../assets/images/pangesture/happy.png')} 
+              style={styles.boxLeft} />
           </PanGestureRight>
         </View>
 
@@ -49,7 +55,9 @@ export default class Swipeable extends Component {
              title = 'good' 
              navigation = {this.props.navigation} 
              info={[this.state.curDate,this.state.cycle]}>
-              <Image source={require('../assets/images/pangesture/good.png')} style={styles.boxRight} />
+              <Image 
+                source={require('../assets/images/pangesture/good.png')} 
+                style={styles.boxRight} />
             </PanGestureLeft>
         </View>
 
@@ -58,9 +66,10 @@ export default class Swipeable extends Component {
               title = 'meh' 
               navigation = {this.props.navigation} 
               info={[this.state.curDate,this.state.cycle]}>
-              <Image source={require('../assets/images/pangesture/meh.png')} style={styles.boxLeft} />
+              <Image 
+                source={require('../assets/images/pangesture/meh.png')} 
+                style={styles.boxLeft} />
             </PanGestureRight>
-
         </View>
 
         <View style={{flex: 1}}>
@@ -68,7 +77,9 @@ export default class Swipeable extends Component {
               title = 'sad' 
               navigation = {this.props.navigation} 
               info={[this.state.curDate,this.state.cycle]}>
-              <Image source={require('../assets/images/pangesture/sad.png')} style={styles.boxRight} />
+              <Image 
+                source={require('../assets/images/pangesture/sad.png')} 
+                style={styles.boxRight} />
             </PanGestureLeft>  
         </View>
 
@@ -77,26 +88,29 @@ export default class Swipeable extends Component {
             title = 'angry' 
             navigation = {this.props.navigation} 
             info={[this.state.curDate,this.state.cycle]}>
-              <Image source={require('../assets/images/pangesture/angry.png')} style={styles.boxLeft} />
+              <Image 
+                source={require('../assets/images/pangesture/angry.png')} 
+                style={styles.boxLeft} />
           </PanGestureRight>
         </View>
-
       </View>
     )
   }
-
 }
+
 const styles = StyleSheet.create({
   mainContainer: {
     flex:1,
     justifyContent: 'space-around'
   },
+
   swipeButton: {
     alignSelf: 'flex-end',
     height: 60,
     width: 290,
     marginBottom: '5%'
   },
+
   boxRight: {
     resizeMode: 'contain',
     width: '80%',
@@ -108,9 +122,9 @@ const styles = StyleSheet.create({
       height: 3,
     },
     shadowOpacity: 0.12,
-    shadowRadius: 8,
-
+    shadowRadius: 8
   },
+
   boxLeft: {
     resizeMode: 'contain',
     width: '80%',
@@ -122,7 +136,7 @@ const styles = StyleSheet.create({
       height: 3,
     },
     shadowOpacity: 0.12,
-    shadowRadius: 8,
-
+    shadowRadius: 8
   }
+  
 })

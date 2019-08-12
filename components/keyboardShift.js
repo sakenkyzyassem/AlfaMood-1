@@ -1,7 +1,13 @@
 import { PropTypes } from 'prop-types';
 import React, { Component } from 'react';
-import { Animated, Dimensions, Keyboard, StyleSheet, TextInput, UIManager } from 'react-native';
-
+import { 
+  Animated, 
+  Dimensions, 
+  Keyboard, 
+  StyleSheet, 
+  TextInput, 
+  UIManager 
+} from 'react-native';
 
 const { State: TextInputState } = TextInput;
 
@@ -34,6 +40,7 @@ export default class KeyboardShift extends Component {
     const { height: windowHeight } = Dimensions.get('window');
     const keyboardHeight = event.endCoordinates.height;
     const currentlyFocusedField = TextInputState.currentlyFocusedField();
+    
     UIManager.measure(currentlyFocusedField, (originX, originY, width, height, pageX, pageY) => {
       const fieldHeight = height;
       const fieldTop = pageY;
@@ -49,7 +56,7 @@ export default class KeyboardShift extends Component {
           useNativeDriver: true,
         }
       ).start();
-    });
+    })
   }
 
   handleKeyboardDidHide = () => {
@@ -72,7 +79,7 @@ const styles = StyleSheet.create({
     top: 0,
     width: '100%'
   }
-});
+})
 
 KeyboardShift.propTypes = {
   children: PropTypes.func.isRequired,

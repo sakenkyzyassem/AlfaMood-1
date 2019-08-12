@@ -54,7 +54,8 @@ export default class SnappableRight extends Component {
         info:this.props.info
       });
     }
-  };
+  }
+
   _onHandlerStateChange = event => {
     if (event.nativeEvent.oldState === State.ACTIVE) {
       Animated.spring(this._dragX, {
@@ -64,9 +65,11 @@ export default class SnappableRight extends Component {
         toValue: 0,
         useNativeDriver: USE_NATIVE_DRIVER,
       }).start();
+      
       this.handleSubmit(this.props.title)
     }
-  };
+  }
+
   render() {
     const { children } = this.props;
     return (
@@ -76,10 +79,12 @@ export default class SnappableRight extends Component {
         minOffsetX={10}
         onGestureEvent={this._onGestureEvent}
         onHandlerStateChange={this._onHandlerStateChange}>
+        
         <Animated.View style={{ transform: [{ translateX: this._transX }] }}>
           {children}
         </Animated.View>
+
       </PanGestureHandler>
-    );
+    )
   }
 }
